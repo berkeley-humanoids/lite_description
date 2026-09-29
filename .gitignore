@@ -15,11 +15,8 @@ wheels/
 
 # Onshape export intermediates (transient; the committed urdf/<robot>.urdf hub
 # is what the generator reuses instead of re-exporting).
-robots/*/cad/assets/
-robots/*/cad/robot.pkl
-
-# load_asset() download cache
-data/
+lite_description/robots/*/cad/assets/
+lite_description/robots/*/cad/robot.pkl
 
 # colcon build artifacts (when robot_descriptions is built in a ROS workspace)
 /install/
