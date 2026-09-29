@@ -13,7 +13,7 @@ meshes, all generated from the Onshape CAD.
 
 The same source serves both worlds:
 
-- Simulation and RL, through the `robot_assets` Python loader, for Mujoco Lab and Isaac Lab.
+- Simulation and RL, through the `lite_description` Python package, for Mujoco Lab and Isaac Lab.
 - ROS 2, through `ros2_control` and `robot_state_publisher`, as the `lite_description`
   ament package.
 
@@ -53,27 +53,36 @@ path emits several blocks while the mock and MuJoCo paths share one combined blo
 ## CAD source
 
 Every description is generated from an Onshape assembly (document
-`e9ee61a2e2678af2088d9f31`) by the `robot_assets` tool. See
-[Re-generating from CAD](#re-generating-from-cad). The files under `robots/<variant>/` are
-build artifacts. Do not hand-edit them. Change the `cad/` inputs and regenerate.
+`e9ee61a2e2678af2088d9f31`) by the generator in `lite_description.workflow`. See
+[Re-generating from CAD](#re-generating-from-cad). The files under
+`lite_description/robots/<variant>/` are build artifacts. Do not hand-edit them. Change the
+`cad/` inputs and regenerate.
 
 ## Usage
 
 ### Simulation and RL (Python, no ROS toolchain)
+
+The `lite_description` Python package carries every variant, so a simulator or a training
+run reaches the assets without a checkout. The package has no dependencies of its own.
 
 ```bash
 uv add git+https://github.com/Berkeley-Humanoids/Lite-Description.git
 ```
 
 ```python
-from robot_assets import load
+import mujoco
+from lite_description import VARIANTS, get_mjcf_path, get_urdf_path
 
-urdf_path = load("robots/lite/urdf/lite.urdf")               # Isaac Lab
-mjcf_path = load("robots/lite_dummy/mjcf/lite_dummy.xml")    # MuJoCo
+model = mujoco.MjModel.from_xml_path(str(get_mjcf_path("lite_biped")))  # MuJoCo
+urdf_path = get_urdf_path("lite")                                      # Isaac Lab
 ```
 
-`load()` fetches the requested variant's subtree from this GitHub repo and caches it. No
-ROS install is required.
+Each function returns a path inside the installed package. A name that is not in
+`VARIANTS` raises `ValueError`. A URDF or MJCF reaches its meshes by a path relative to its
+own directory, so load the file where it lies instead of copying it out alone.
+
+The `uv.lock` of the consuming project records the commit of this repository. The assets
+thus change only when that project upgrades `lite-description`. No ROS install is required.
 
 ### ROS 2
 
@@ -81,33 +90,36 @@ ROS install is required.
 repo root. Build it in a ROS 2 workspace, or pull it with `vcs` or
 `humanoid_control.repos` from `Humanoid Control`, then run `colcon build`. Downstream,
 `robot_state_publisher` runs xacro on
-`robots/<variant>/xacro/<variant>.urdf.xacro`, and
+`$(find lite_description)/robots/<variant>/xacro/<variant>.urdf.xacro`, and
 `package://lite_description/robots/<variant>/meshes/visual/...` resolves after install.
+colcon installs `lite_description/robots/<variant>/` to
+`share/lite_description/robots/<variant>/` and leaves out `cad/`.
 
 ## Repository layout
 
 ```
 Lite-Description/                  # repo root == ament package "lite_description"
-  package.xml  CMakeLists.txt      # ament (colcon); installs robots/<variant>/...
-  pyproject.toml                   # pip/uv: builds the robot_assets Python module
-  robot_assets/                    # Python module: load() and the CAD->assets generator
+  package.xml  CMakeLists.txt      # ament (colcon); installs lite_description/robots/<variant>/...
+  pyproject.toml                   # pip/uv: builds the lite-description wheel
+  lite_description/                # Python package
+    __init__.py                    #   ROBOTS_DIR, VARIANTS, get_urdf_path(), get_mjcf_path()
     actuators/                     #   actuator spec tables (velocity/effort/armature)
-    workflow/                      #   the generator stages
-  robots/                          # per-variant assets (franka_description-style subdir)
-    <variant>/
-      xacro/                       #   ROS entry (GENERATED)
-        <variant>.urdf.xacro       #     assembly: args, includes, instantiation
-        <variant>.description.xacro  #   model macro: kinematics, ${mesh_root}, base_link
-        <variant>.ros2_control.xacro #   hardware macros: joints, groups, backends
-      urdf/<variant>.urdf          #   flat URDF (GENERATED; the kinematic HUB)
-      mjcf/<variant>.xml           #   MJCF (GENERATED; MuJoCo training + deployment sim)
-      meshes/visual/*.stl          #   one shared mesh copy
-      cad/                         #   generation INPUTS (not installed):
-        config.json                #     Onshape document + export options
-        joint_properties.json      #     sim tuning: armature / friction / effort_limit
-        physics.json               #     MJCF <option>, freejoint, IMU, contact (optional)
-        ros2_control.json          #     ROS hardware map (optional)
-        scad/                      #     collider sources
+    workflow/                      #   the generator stages (needs the `cad` extra)
+    robots/                        #   per-variant assets, inside the package so a wheel carries them
+      <variant>/
+        xacro/                     #     ROS entry (GENERATED)
+          <variant>.urdf.xacro     #       assembly: args, includes, instantiation
+          <variant>.description.xacro  #   model macro: kinematics, ${mesh_root}, base_link
+          <variant>.ros2_control.xacro #   hardware macros: joints, groups, backends
+        urdf/<variant>.urdf        #     flat URDF (GENERATED; the kinematic HUB)
+        mjcf/<variant>.xml         #     MJCF (GENERATED; MuJoCo training + deployment sim)
+        meshes/visual/*.stl        #     one shared mesh copy
+        cad/                       #     generation INPUTS (not in the wheel, not installed):
+          config.json              #       Onshape document + export options
+          joint_properties.json    #       sim tuning: armature / friction / effort_limit
+          physics.json             #       MJCF <option>, freejoint, IMU, contact (optional)
+          ros2_control.json        #       ROS hardware map (optional)
+          scad/                    #       collider sources
 ```
 
 The committed `urdf/<variant>.urdf` is the single kinematic hub. The `mjcf` and `xacro`
@@ -123,17 +135,20 @@ uv sync --extra cad
 sudo apt install openscad        # for collider editing (onshape-to-robot)
 ```
 
+The generator reads `cad/`, which only a checkout has, so run it from a checkout. In an
+installed package, it stops with an error instead of writing into `site-packages`.
+
 One command produces all three formats from a variant's `cad/` inputs:
 
 ```bash
 # Full pipeline. The Onshape stage is skipped whenever the URDF hub is committed.
-uv run robot-assets-generate lite_dummy
+uv run lite-description-generate lite_dummy
 
 # Re-emit only some stages, after editing physics.json or ros2_control.json:
-uv run robot-assets-generate lite_dummy --only mjcf,xacro
+uv run lite-description-generate lite_dummy --only mjcf,xacro
 
 # Re-run the Onshape export even though the hub is committed:
-uv run robot-assets-generate lite_dummy --force
+uv run lite-description-generate lite_dummy --force
 ```
 
 | Stage | Reads | Writes |
@@ -156,8 +171,8 @@ that is not backed by a `<site>`.
 ### Editing colliders (OpenSCAD)
 
 ```bash
-uv run robot-assets-onshape-to-urdf lite_dummy --keep-assets
-cd robots/lite_dummy/cad/assets/
+uv run lite-description-onshape-to-urdf lite_dummy --keep-assets
+cd lite_description/robots/lite_dummy/cad/assets/
 uv run onshape-to-robot-edit-shape ./chest.stl
 ```
 

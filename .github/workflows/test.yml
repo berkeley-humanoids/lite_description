@@ -65,7 +65,7 @@ jobs:
           # Each assembly must expand on every backend it supports, not just the
           # default. Only the real backend emits the per-bus <ros2_control>
           # blocks that the hardware bring-ups depend on.
-          for assembly in robots/*/xacro/*.urdf.xacro; do
+          for assembly in lite_description/robots/*/xacro/*.urdf.xacro; do
             for backend in \
               "" \
               "use_mock_hardware:=false" \

@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "robot-assets"
-version = "0.4.0"
-description = "Robot asset tool: generate URDF / MJCF / xacro from Onshape CAD, and load robot descriptions"
+name = "lite-description"
+version = "0.5.0"
+description = "URDF, MJCF and meshes for the Berkeley Humanoid Lite, and the generator that builds them from Onshape CAD"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
@@ -19,28 +19,30 @@ cad = [
 
 [project.scripts]
 # One converter, all three formats (CAD -> URDF + MJCF + xacro).
-robot-assets-generate = "robot_assets.workflow.generate:main"
+lite-description-generate = "lite_description.workflow.generate:main"
 # Individual stages (useful for partial regen without re-hitting the Onshape API).
-robot-assets-onshape-to-urdf = "robot_assets.workflow.onshape_to_urdf:main"
-robot-assets-finalize-urdf = "robot_assets.workflow.finalize_urdf:main"
-robot-assets-urdf-to-mjcf = "robot_assets.workflow.urdf_to_mjcf:main"
-robot-assets-urdf-to-xacro = "robot_assets.workflow.urdf_to_xacro:main"
+lite-description-onshape-to-urdf = "lite_description.workflow.onshape_to_urdf:main"
+lite-description-finalize-urdf = "lite_description.workflow.finalize_urdf:main"
+lite-description-urdf-to-mjcf = "lite_description.workflow.urdf_to_mjcf:main"
+lite-description-urdf-to-xacro = "lite_description.workflow.urdf_to_xacro:main"
 
 [dependency-groups]
 test = [
     "pytest>=8.0",
-    "robot-assets[cad]",
+    "lite-description[cad]",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["robot_assets"]
+packages = ["lite_description"]
+# cad/ holds the generation inputs, which only the generator reads from a checkout.
+exclude = ["**/cad"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/robot_assets",
+    "/lite_description",
     "/README.md",
     "/pyproject.toml",
 ]

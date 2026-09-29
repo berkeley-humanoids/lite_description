@@ -3,12 +3,14 @@ project(lite_description)
 
 find_package(ament_cmake REQUIRED)
 
-# Lite variants live under robots/<robot>/ (franka_description layout: package at
-# the repo root, per-robot assets in a robots/ subdir). Each ships generated,
-# installable artifacts (xacro / urdf / mjcf / meshes). The cad/ subdir holds
-# generation INPUTS (Onshape config, joint_properties.json, physics.json,
-# ros2_control.json, scad) and is intentionally NOT installed.
-# Keep this list in sync with the converter's robot list.
+# Lite variants live under lite_description/robots/<robot>/, inside the Python
+# package that ships them in a wheel. They install to
+# share/lite_description/robots/<robot>/, so package:// URLs and $(find ...) do
+# not depend on the source layout. Each ships generated, installable artifacts
+# (xacro / urdf / mjcf / meshes). The cad/ subdir holds generation INPUTS
+# (Onshape config, joint_properties.json, physics.json, ros2_control.json, scad)
+# and is intentionally NOT installed.
+# The generator's package stage adds each new robot to this list.
 set(ROBOTS
   lite
   lite_bimanual
@@ -22,9 +24,9 @@ set(ROBOTS
 # a model-only robot may have no ros2_control xacro, etc.).
 foreach(robot ${ROBOTS})
   foreach(sub xacro urdf mjcf meshes)
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/robots/${robot}/${sub})
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/lite_description/robots/${robot}/${sub})
       install(
-        DIRECTORY robots/${robot}/${sub}
+        DIRECTORY lite_description/robots/${robot}/${sub}
         DESTINATION share/${PROJECT_NAME}/robots/${robot}
       )
     endif()

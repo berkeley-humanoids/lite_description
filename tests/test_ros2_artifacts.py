@@ -1,4 +1,4 @@
-"""Tests for the generated ROS 2 xacro artifacts under robots/<robot>/xacro/.
+"""Tests for the generated ROS 2 xacro artifacts under lite_description/robots/<robot>/xacro/.
 
 Covers three things:
   1. every generated xacro is well-formed XML;
@@ -19,18 +19,16 @@ from pathlib import Path
 
 import pytest
 
-from robot_assets.workflow import robot_model, urdf_to_xacro
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
-DESCRIPTIONS = REPO_ROOT / "robots"
+from lite_description import ROBOTS_DIR
+from lite_description.workflow import robot_model, urdf_to_xacro
 
 
 def _robots_with_xacro() -> list[Path]:
-    return sorted(p.parent.parent for p in DESCRIPTIONS.glob("*/xacro/*.description.xacro"))
+    return sorted(p.parent.parent for p in ROBOTS_DIR.glob("*/xacro/*.description.xacro"))
 
 
 def _robots_with_ros2_control() -> list[Path]:
-    return sorted(p.parent.parent for p in DESCRIPTIONS.glob("*/cad/ros2_control.json"))
+    return sorted(p.parent.parent for p in ROBOTS_DIR.glob("*/cad/ros2_control.json"))
 
 
 ROBOT_DIRS = _robots_with_xacro()
@@ -90,19 +88,19 @@ def test_committed_xacro_matches_generator(robot_dir):
     for filename, content in expected.items():
         committed = (robot_dir / "xacro" / filename).read_text()
         assert committed == content, (
-            f"{robot}/{filename} is stale -- rerun `robot-assets-generate {robot}`"
+            f"{robot}/{filename} is stale -- rerun `lite-description-generate {robot}`"
         )
 
 
 def _biped_config():
     """Return (config, limits) for lite_biped, the variant with an IMU and a four-bar."""
-    robot_dir = DESCRIPTIONS / "lite_biped"
+    robot_dir = ROBOTS_DIR / "lite_biped"
     cfg = json.loads((robot_dir / "cad" / "ros2_control.json").read_text())
     root = robot_model.parse(robot_dir / "urdf" / "lite_biped.urdf").getroot()
     return cfg, robot_model.joint_limits(root)
 
 
-@pytest.mark.skipif(not (DESCRIPTIONS / "lite_biped").is_dir(), reason="no lite_biped")
+@pytest.mark.skipif(not (ROBOTS_DIR / "lite_biped").is_dir(), reason="no lite_biped")
 def test_group_without_joints_is_rejected():
     """A group with no joints would emit a bus block calling an undefined macro."""
     cfg, limits = _biped_config()
@@ -112,7 +110,7 @@ def test_group_without_joints_is_rejected():
         urdf_to_xacro.build_ros2_control_xacro("lite_biped", cfg, limits)
 
 
-@pytest.mark.skipif(not (DESCRIPTIONS / "lite_biped").is_dir(), reason="no lite_biped")
+@pytest.mark.skipif(not (ROBOTS_DIR / "lite_biped").is_dir(), reason="no lite_biped")
 def test_linkage_without_use_linkage_arg_is_rejected():
     """The four-bar macros reference ${use_linkage}, so the arg must be declared."""
     cfg, limits = _biped_config()
@@ -121,7 +119,7 @@ def test_linkage_without_use_linkage_arg_is_rejected():
         urdf_to_xacro.build_ros2_control_xacro("lite_biped", cfg, limits)
 
 
-@pytest.mark.skipif(not (DESCRIPTIONS / "lite_biped").is_dir(), reason="no lite_biped")
+@pytest.mark.skipif(not (ROBOTS_DIR / "lite_biped").is_dir(), reason="no lite_biped")
 def test_partial_linkage_is_rejected():
     """humanoid_devices_robstride aborts on some-but-not-all of the four bar lengths."""
     cfg, limits = _biped_config()
@@ -132,7 +130,7 @@ def test_partial_linkage_is_rejected():
         urdf_to_xacro.build_ros2_control_xacro("lite_biped", cfg, limits)
 
 
-@pytest.mark.skipif(not (DESCRIPTIONS / "lite_biped").is_dir(), reason="no lite_biped")
+@pytest.mark.skipif(not (ROBOTS_DIR / "lite_biped").is_dir(), reason="no lite_biped")
 def test_imu_without_real_plugin_emits_no_sensor_component():
     """A sim-only IMU is backed by MujocoSystem, so real hardware gets no sensor block."""
     cfg, limits = _biped_config()

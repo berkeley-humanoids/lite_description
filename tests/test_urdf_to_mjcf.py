@@ -1,14 +1,13 @@
 """Tests for the MJCF post-processing steps and the committed MJCF assets."""
 import xml.etree.ElementTree as ET
-from pathlib import Path
 
 import mujoco
 import pytest
 
-from robot_assets.workflow.urdf_to_mjcf import add_actuators, replace_cylinders_with_capsules
+from lite_description import ROBOTS_DIR
+from lite_description.workflow.urdf_to_mjcf import add_actuators, replace_cylinders_with_capsules
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-MJCF_FILES = sorted((REPO_ROOT / "robots").glob("*/mjcf/*.xml"))
+MJCF_FILES = sorted(ROBOTS_DIR.glob("*/mjcf/*.xml"))
 MJCF_IDS = [p.parent.parent.name for p in MJCF_FILES]
 
 
