@@ -4,9 +4,10 @@ Called by ``generate.py``. The flat URDF is the hub:
 
     URDF + meshes  ->  MuJoCo compile  ->  post-process  ->  mjcf/<robot>.xml
 
-Post-processing replaces cylinder geoms with capsules, injects the ``<option>`` physics
-tuning from ``cad/physics.json``, synthesizes one ``<position>`` actuator per actuated
-joint, and sets per-joint frictionloss and armature from ``cad/joint_properties.json``.
+Post-processing replaces cylinder geoms with capsules, moves the collision geoms to
+geom group 3, injects the ``<option>`` physics tuning from ``cad/physics.json``,
+synthesizes one ``<position>`` actuator per actuated joint, and sets per-joint
+frictionloss and armature from ``cad/joint_properties.json``.
 Floating-base, IMU and contact handling are per-variant opt-ins, also from physics.json.
 
 The compiled model is parsed once and written once, so the intermediate states never
@@ -44,6 +45,11 @@ INDENT = "  "
 
 # Where the generated MJCF looks for its meshes, relative to mjcf/<robot>.xml.
 MESHDIR = "../meshes/visual/"
+
+# Geom group of every collision geom, as in MuJoCo Menagerie and mjlab's G1. The URDF
+# import leaves collision geoms in group 0, the group of the scene's floor, so a ray
+# cast that looks for the terrain in group 0 also hits the robot.
+COLLISION_GROUP = 3
 
 
 def _joint_property(joint_name: str, joint_properties: dict, key: str):
@@ -132,6 +138,22 @@ def replace_cylinders_with_capsules(root: ET.Element) -> int:
     for geom in cylinders:
         geom.set("type", "capsule")
     return len(cylinders)
+
+
+def set_collision_group(root: ET.Element) -> int:
+    """Move every collision geom to ``COLLISION_GROUP``. Returns how many moved.
+
+    Viewers and mjlab's ray sensors see groups 0 to 2 by default, so the collision
+    geoms keep colliding but drop out of renders and terrain ray casts. The visual
+    meshes stay in group 1, where the URDF import puts them.
+    """
+    collision = [
+        geom for geom in root.iter("geom")
+        if geom.get("contype", "1") != "0" or geom.get("conaffinity", "1") != "0"
+    ]
+    for geom in collision:
+        geom.set("group", str(COLLISION_GROUP))
+    return len(collision)
 
 
 def add_option(root: ET.Element, options: dict) -> None:
@@ -351,6 +373,8 @@ def generate(robot_dir: Path) -> list[Path]:
     replaced = replace_cylinders_with_capsules(root)
     if replaced:
         print(f"Replaced {replaced} cylinder geom(s) with capsules")
+    moved = set_collision_group(root)
+    print(f"Moved {moved} collision geom(s) to group {COLLISION_GROUP}")
     add_option(root, options)
     add_actuators(root, joint_properties)
     if imu:
