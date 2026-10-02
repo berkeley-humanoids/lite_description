@@ -5,7 +5,12 @@ import mujoco
 import pytest
 
 from lite_description import ROBOTS_DIR
-from lite_description.workflow.urdf_to_mjcf import add_actuators, replace_cylinders_with_capsules
+from lite_description.workflow.urdf_to_mjcf import (
+    COLLISION_GROUP,
+    add_actuators,
+    replace_cylinders_with_capsules,
+    set_collision_group,
+)
 
 MJCF_FILES = sorted(ROBOTS_DIR.glob("*/mjcf/*.xml"))
 MJCF_IDS = [p.parent.parent.name for p in MJCF_FILES]
@@ -48,6 +53,46 @@ def test_replace_cylinders_with_capsules_returns_zero_when_no_cylinders():
     )
 
     assert replace_cylinders_with_capsules(root) == 0
+
+
+def test_set_collision_group_moves_collision_geoms_only():
+    root = ET.fromstring(
+        """<mujoco>
+  <worldbody>
+    <body name="base">
+      <geom name="mesh" type="mesh" contype="0" conaffinity="0" group="1"/>
+      <geom name="foot" type="box" size="0.1 0.2 0.3"/>
+      <geom name="shin" type="capsule" size="0.02 0.1" contype="0"/>
+    </body>
+  </worldbody>
+</mujoco>""",
+    )
+
+    count = set_collision_group(root)
+
+    geoms = {geom.get("name"): geom for geom in root.iter("geom")}
+    assert count == 2
+    assert geoms["mesh"].get("group") == "1"
+    assert geoms["foot"].get("group") == str(COLLISION_GROUP)
+    # A geom that only receives contacts (conaffinity) still collides.
+    assert geoms["shin"].get("group") == str(COLLISION_GROUP)
+
+
+@pytest.mark.skipif(not MJCF_FILES, reason="no generated MJCFs")
+@pytest.mark.parametrize("mjcf_path", MJCF_FILES, ids=MJCF_IDS)
+def test_committed_mjcf_keeps_group_0_for_the_scene(mjcf_path):
+    """Every robot collision geom is in COLLISION_GROUP, so group 0 holds only the
+    scene, such as the floor of a ``*_scene.xml``. A ray sensor that looks for the
+    terrain in group 0 then never hits the robot."""
+    model = mujoco.MjModel.from_xml_path(str(mjcf_path))
+    for i in range(model.ngeom):
+        if model.geom_contype[i] == 0 and model.geom_conaffinity[i] == 0:
+            continue
+        name = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, i)
+        expected = 0 if model.geom_bodyid[i] == 0 else COLLISION_GROUP
+        assert model.geom_group[i] == expected, (
+            f"{mjcf_path} collision geom {name!r} is in group {model.geom_group[i]}"
+        )
 
 
 def test_add_actuators_emits_position_actuators_and_no_sensors():
