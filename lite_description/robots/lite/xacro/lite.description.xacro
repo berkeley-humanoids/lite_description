@@ -17,9 +17,15 @@
       </inertial>
       <!-- Part pelvis_parts -->
       <collision>
-        <origin xyz="0.02 0 -0" rpy="1.5708 1.5708 0" />
+        <origin xyz="0.00964 1e-05 0.09166" rpy="-1.5708 1.5708 0" />
         <geometry>
-          <cylinder length="0.16" radius="0.05" />
+          <cylinder length="0.03903" radius="0.069" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.02 -1e-05 0" rpy="-1.5708 1.5708 0" />
+        <geometry>
+          <cylinder length="0.14449" radius="0.052" />
         </geometry>
       </collision>
       <visual>
@@ -59,9 +65,9 @@
       </inertial>
       <!-- Part left_hip_roll_parts -->
       <collision>
-        <origin xyz="0 0.181098 -0.0871979" rpy="1.22173 -0 0" />
+        <origin xyz="1.3203e-07 0.0248968 -0.0653032" rpy="3.14157 1.50097 1.57077" />
         <geometry>
-          <cylinder length="0.15" radius="0.05" />
+          <cylinder length="0.08315" radius="0.051" />
         </geometry>
       </collision>
       <visual>
@@ -82,6 +88,12 @@
         <inertia ixx="0.0116205" ixy="1.09303e-06" ixz="-0.000458028" iyy="0.0118686" iyz="2.21073e-07" izz="0.00261694" />
       </inertial>
       <!-- Part left_hip_yaw_parts -->
+      <collision>
+        <origin xyz="-0.0049983 -1.22712e-06 -0.2575" rpy="-5e-06 0.068934 -1e-06" />
+        <geometry>
+          <cylinder length="0.14534" radius="0.055" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="0.00130442 -2.2783e-05 -0.237299" rpy="-0 0 -0" />
         <geometry>
@@ -101,9 +113,9 @@
       </inertial>
       <!-- Part left_knee_pitch_parts -->
       <collision>
-        <origin xyz="-0.015 0.19 0" rpy="1.5708 1.5708 0" />
+        <origin xyz="-0.0149969 0.1519 -1.62702e-06" rpy="-2.17696 -1.57079 0.606162" />
         <geometry>
-          <cylinder length="0.12" radius="0.045" />
+          <cylinder length="0.30379" radius="0.044" />
         </geometry>
       </collision>
       <visual>
@@ -302,9 +314,9 @@
       </inertial>
       <!-- Part right_hip_roll_parts -->
       <collision>
-        <origin xyz="-0 0.181098 -0.0871979" rpy="1.22173 0 0" />
+        <origin xyz="5.55112e-08 0.0248961 -0.0653034" rpy="3.14159 1.50098 1.57079" />
         <geometry>
-          <cylinder length="0.15" radius="0.05" />
+          <cylinder length="0.08315" radius="0.051" />
         </geometry>
       </collision>
       <visual>
@@ -325,6 +337,12 @@
         <inertia ixx="0.0116206" ixy="-1.08279e-06" ixz="-0.000458016" iyy="0.0118687" iyz="-3.03522e-07" izz="0.00261696" />
       </inertial>
       <!-- Part right_hip_yaw_parts -->
+      <collision>
+        <origin xyz="-0.00500071 -1.04918e-06 -0.2575" rpy="-4e-06 0.068943 -2e-06" />
+        <geometry>
+          <cylinder length="0.14534" radius="0.055" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="0.00130421 2.35733e-05 -0.237299" rpy="0 0 0" />
         <geometry>
@@ -344,9 +362,9 @@
       </inertial>
       <!-- Part right_knee_pitch_parts -->
       <collision>
-        <origin xyz="-0.015 0.19 0" rpy="1.5708 1.5708 0" />
+        <origin xyz="-0.0150014 0.1519 -1.29567e-06" rpy="-1.49083 -1.57079 -0.079959" />
         <geometry>
-          <cylinder length="0.12" radius="0.045" />
+          <cylinder length="0.30379" radius="0.044" />
         </geometry>
       </collision>
       <visual>
@@ -527,9 +545,15 @@
       </inertial>
       <!-- Part chest_parts -->
       <collision>
-        <origin xyz="0.005 0 0.1" rpy="0.261799 0 -1.5708" />
+        <origin xyz="-0.00177 5e-05 0.13711" rpy="0 0 0" />
         <geometry>
-          <box size="0.08 0.1 0.18" />
+          <sphere radius="0.074" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="-0.02678 -3e-05 0.24833" rpy="0 0 0" />
+        <geometry>
+          <sphere radius="0.058" />
         </geometry>
       </collision>
       <visual>
@@ -587,9 +611,9 @@
       </inertial>
       <!-- Part left_shoulder_yaw_parts -->
       <collision>
-        <origin xyz="0 -0 0.03" rpy="0 -0 -1.5708" />
+        <origin xyz="-2.88583e-07 -2.52739e-07 0.01418" rpy="-3e-06 -7e-06 -1.5708" />
         <geometry>
-          <cylinder length="0.08" radius="0.03" />
+          <cylinder length="0.18835" radius="0.035" />
         </geometry>
       </collision>
       <visual>
@@ -610,6 +634,12 @@
         <inertia ixx="0.000116342" ixy="7.43616e-06" ixz="-4.1438e-08" iyy="9.70555e-05" iyz="-5.662e-09" izz="7.93924e-05" />
       </inertial>
       <!-- Part left_elbow_pitch_parts -->
+      <collision>
+        <origin xyz="-0.0100007 0.06984 -1.09217e-06" rpy="2.86891 1.57079 -1.84348" />
+        <geometry>
+          <cylinder length="0.13969" radius="0.032" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="-0.00956573 0.0258355 -2.70123e-07" rpy="0 -0 -0" />
         <geometry>
@@ -628,12 +658,6 @@
         <inertia ixx="0.000852062" ixy="5.7427e-08" ixz="5.92015e-07" iyy="0.000858077" iyz="-2.89184e-07" izz="0.000282536" />
       </inertial>
       <!-- Part left_wrist_yaw_parts -->
-      <collision>
-        <origin xyz="-0 0 -0.025" rpy="0 0 0" />
-        <geometry>
-          <cylinder length="0.06" radius="0.03" />
-        </geometry>
-      </collision>
       <visual>
         <origin xyz="-1.95914e-05 -1.82827e-05 -0.0591926" rpy="-1.5708 -0 -0" />
         <geometry>
@@ -671,9 +695,21 @@
       </inertial>
       <!-- Part left_hand_parts -->
       <collision>
-        <origin xyz="0 0.07 -0" rpy="1.5708 -0 -1.5708" />
+        <origin xyz="-0.00207777 0.0683 -0.0172813" rpy="1.51512 -0.000509 -0.009064" />
         <geometry>
-          <box size="0.1 0.07 0.015" />
+          <cylinder length="0.12782" radius="0.01758" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="-0.00134787 0.06938 0.0111987" rpy="1.51512 -0.000509 -0.009064" />
+        <geometry>
+          <cylinder length="0.12882" radius="0.01758" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="-8.80453e-05 0.0615002 0.0565088" rpy="2.35688 -0.004202 0.00419" />
+        <geometry>
+          <cylinder length="0.06496" radius="0.005" />
         </geometry>
       </collision>
       <visual>
@@ -1334,9 +1370,9 @@
       </inertial>
       <!-- Part right_shoulder_yaw_parts -->
       <collision>
-        <origin xyz="0 0 0.03" rpy="0 -0 -1.5708" />
+        <origin xyz="2.88583e-07 6.8014e-08 0.01418" rpy="-3e-06 4e-06 1.5708" />
         <geometry>
-          <cylinder length="0.08" radius="0.03" />
+          <cylinder length="0.18835" radius="0.035" />
         </geometry>
       </collision>
       <visual>
@@ -1357,6 +1393,12 @@
         <inertia ixx="0.000116343" ixy="7.43678e-06" ixz="3.8036e-08" iyy="9.70569e-05" iyz="6.815e-09" izz="7.93932e-05" />
       </inertial>
       <!-- Part right_elbow_pitch_parts -->
+      <collision>
+        <origin xyz="-0.00999926 0.06984 -2.74254e-07" rpy="-1.13483 -1.57079 -0.435968" />
+        <geometry>
+          <cylinder length="0.13969" radius="0.032" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="-0.0095654 0.0258358 1.46047e-06" rpy="-3.14159 -0 0" />
         <geometry>
@@ -1375,12 +1417,6 @@
         <inertia ixx="0.000850282" ixy="2.867e-08" ixz="-3.809e-09" iyy="0.000856128" iyz="4.2812e-08" izz="0.000282295" />
       </inertial>
       <!-- Part right_wrist_yaw_parts -->
-      <collision>
-        <origin xyz="-0 -0 -0.025" rpy="-0 0 3.14159" />
-        <geometry>
-          <cylinder length="0.06" radius="0.03" />
-        </geometry>
-      </collision>
       <visual>
         <origin xyz="1.99324e-07 2.65767e-05 -0.0592501" rpy="1.5708 0 0" />
         <geometry>
@@ -1418,9 +1454,21 @@
       </inertial>
       <!-- Part right_hand_parts -->
       <collision>
-        <origin xyz="-0 0.07 -0" rpy="1.5708 0 1.5708" />
+        <origin xyz="0.00208084 0.0683 -0.0172787" rpy="-1.51513 -0.000502 -3.13253" />
         <geometry>
-          <box size="0.1 0.07 0.015" />
+          <cylinder length="0.12782" radius="0.01758" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.00135074 0.06938 0.0112013" rpy="-1.51513 -0.000502 -3.13253" />
+        <geometry>
+          <cylinder length="0.12882" radius="0.01758" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="9.05862e-05 0.0614998 0.0565112" rpy="-2.35689 -0.004195 3.1374" />
+        <geometry>
+          <cylinder length="0.06496" radius="0.005" />
         </geometry>
       </collision>
       <visual>
@@ -2081,9 +2129,9 @@
       </inertial>
       <!-- Part head_parts -->
       <collision>
-        <origin xyz="-0.015 0 0" rpy="-1.5708 -1.5708 0" />
+        <origin xyz="-0.02475 -0.000899928 -1.50969e-07" rpy="-1.57079 1.57079 -1e-06" />
         <geometry>
-          <cylinder length="0.03" radius="0.09" />
+          <cylinder length="0.04037" radius="0.097" />
         </geometry>
       </collision>
       <visual>
