@@ -113,8 +113,13 @@
                   <body name="left_foot" pos="0 0.04 0" quat="0.707105 0 0.707108 0">
                     <inertial pos="0.00124938 0.0227876 0.0398042" quat="0.994259 -0.101477 0.0262886 0.0214671" mass="1.20654" diaginertia="0.00367661 0.00336341 0.00122719" />
                     <joint name="left_ankle_roll" pos="0 0 0" axis="0 0 1" range="-0.349066 0.349066" actuatorfrcrange="-5.5 5.5" frictionloss="0.1" armature="0.001" />
-                    <geom size="0.0325 0.06 0.015" pos="0 0.05 0.015" quat="0.707105 0.707108 0 0" type="box" group="3" />
-                    <geom size="0.035 0.025 0.015" pos="0 0.04 0.11" quat="0.573577 0.819151 0 0" type="box" group="3" />
+                    <geom size="0.008 0.017" pos="-0.005 0.057 -0.056" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.0335" pos="-0.0055 0.057 -0.0223" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.033" pos="-0.006 0.057 0.0113" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.0355" pos="-0.0045 0.057 0.045" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.042" pos="-0.002 0.057 0.0787" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.041" pos="0.001 0.0526 0.1123" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.024" pos="0.004 0.0389 0.146" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
                     <geom pos="0.00124938 0.0227876 0.0398042" quat="0.499998 0.5 -0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.933333 0.933333 0.933333 1" mesh="left_foot_visual" />
                   </body>
                 </body>
@@ -152,8 +157,13 @@
                   <body name="right_foot" pos="0 0.04 0" quat="0.707105 0 0.707108 0">
                     <inertial pos="-0.0012494 0.0227876 0.039804" quat="0.994259 -0.101477 -0.026289 -0.021469" mass="1.20654" diaginertia="0.00367661 0.00336341 0.00122719" />
                     <joint name="right_ankle_roll" pos="0 0 0" axis="0 0 1" range="-0.349066 0.349066" actuatorfrcrange="-5.5 5.5" frictionloss="0.1" armature="0.001" />
-                    <geom size="0.0325 0.06 0.015" pos="0 0.05 0.015" quat="0.707105 0.707108 0 0" type="box" group="3" />
-                    <geom size="0.035 0.025 0.015" pos="0 0.04 0.11" quat="0.573577 0.819151 0 0" type="box" group="3" />
+                    <geom size="0.008 0.017" pos="0.005 0.057 -0.056" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.0335" pos="0.0055 0.057 -0.0223" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.033" pos="0.006 0.057 0.0113" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.0355" pos="0.0045 0.057 0.045" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.042" pos="0.002 0.057 0.0787" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.041" pos="-0.001 0.0526 0.1123" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
+                    <geom size="0.008 0.024" pos="-0.004 0.0389 0.146" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" />
                     <geom pos="-0.0012494 0.0227876 0.039804" quat="0.499998 0.5 -0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.933333 0.933333 0.933333 1" mesh="right_foot_visual" />
                   </body>
                 </body>

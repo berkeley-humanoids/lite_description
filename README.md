@@ -81,6 +81,13 @@ Each function returns a path inside the installed package. A name that is not in
 `VARIANTS` raises `ValueError`. A URDF or MJCF reaches its meshes by a path relative to its
 own directory, so load the file where it lies instead of copying it out alone.
 
+#### Foot colliders
+
+`lite_biped`, `lite` and `lite_pro` share one shoe collider: seven r8 capsules across the
+sole, from the heel to the toe (`cad/scad/<side>_foot.scad`). The five capsules under the
+flat sole are flush with it, 65 mm below the foot origin. The last two follow the toe
+spring. `lite_biped_debug` keeps its flat debug box.
+
 The `uv.lock` of the consuming project records the commit of this repository. The assets
 thus change only when that project upgrades `lite-description`. No ROS install is required.
 

@@ -56,17 +56,13 @@
                   <body name="left_foot" pos="0 0.04 0" quat="0.707105 0 0.707108 0">
                     <inertial pos="-0.00237479 0.023215 0.0359752" quat="0.992439 -0.0818733 0.0284825 0.0868931" mass="0.44" diaginertia="0.00152195 0.00141506 0.000450226" />
                     <joint name="left_ankle_roll" pos="0 0 0" axis="0 0 1" range="-0.349066 0.349066" actuatorfrcrange="-5.5 5.5" frictionloss="0.1" armature="0.001" />
-                    <geom size="0.008" pos="-0.0046 0.057 -0.05998" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_0" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.03941 0.057 -0.0259" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_1" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.02804 0.057 -0.02442" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_2" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.04209 0.057 0.02764" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_3" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.03476 0.057 0.02877" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_4" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.04432 0.057 0.0812" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_5" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.04148 0.057 0.08196" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_6" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.00047 0.057 0.09173" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_7" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.03438 0.04891 0.12489" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_8" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.03932 0.04853 0.12597" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_9" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.00465 0.03713 0.14874" quat="0.707105 0.707108 0 0" group="3" name="left_foot_collision_10" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.017" pos="-0.005 0.057 -0.056" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_0" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.0335" pos="-0.0055 0.057 -0.0223" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_1" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.033" pos="-0.006 0.057 0.0113" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_2" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.0355" pos="-0.0045 0.057 0.045" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_3" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.042" pos="-0.002 0.057 0.0787" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_4" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.041" pos="0.001 0.0526 0.1123" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_5" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.024" pos="0.004 0.0389 0.146" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="left_foot_collision_6" condim="3" friction="0.6 0.005 0.0001" priority="1" />
                     <geom pos="-0.00237479 0.023215 0.0359752" quat="0.499998 0.5 -0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.933333 0.933333 0.933333 1" mesh="left_foot_visual" />
                   </body>
                 </body>
@@ -104,17 +100,13 @@
                   <body name="right_foot" pos="0 0.04 0" quat="0.707105 0 0.707108 0">
                     <inertial pos="0.0023746 0.0232151 0.0359757" quat="0.992441 -0.0818772 -0.028477 -0.0868657" mass="0.44" diaginertia="0.00152196 0.00141506 0.000450227" />
                     <joint name="right_ankle_roll" pos="0 0 0" axis="0 0 1" range="-0.349066 0.349066" actuatorfrcrange="-5.5 5.5" frictionloss="0.1" armature="0.001" />
-                    <geom size="0.008" pos="0.0046 0.057 -0.05998" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_0" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.03941 0.057 -0.0259" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_1" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.02804 0.057 -0.02442" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_2" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.04209 0.057 0.02764" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_3" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.03476 0.057 0.02877" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_4" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.04432 0.057 0.0812" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_5" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.04148 0.057 0.08196" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_6" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.00047 0.057 0.09173" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_7" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="0.03438 0.04891 0.12489" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_8" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.03932 0.04853 0.12597" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_9" condim="3" friction="0.6 0.005 0.0001" priority="1" />
-                    <geom size="0.008" pos="-0.00465 0.03713 0.14874" quat="0.707105 0.707108 0 0" group="3" name="right_foot_collision_10" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.017" pos="0.005 0.057 -0.056" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_0" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.0335" pos="0.0055 0.057 -0.0223" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_1" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.033" pos="0.006 0.057 0.0113" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_2" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.0355" pos="0.0045 0.057 0.045" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_3" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.042" pos="0.002 0.057 0.0787" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_4" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.041" pos="-0.001 0.0526 0.1123" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_5" condim="3" friction="0.6 0.005 0.0001" priority="1" />
+                    <geom size="0.008 0.024" pos="-0.004 0.0389 0.146" quat="0.499998 0.5 0.500002 0.5" type="capsule" group="3" name="right_foot_collision_6" condim="3" friction="0.6 0.005 0.0001" priority="1" />
                     <geom pos="0.0023746 0.0232151 0.0359757" quat="0.499998 0.5 -0.5 0.500002" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.933333 0.933333 0.933333 1" mesh="right_foot_visual" />
                   </body>
                 </body>
