@@ -106,6 +106,28 @@ sole, from the heel to the toe (`cad/scad/<side>_foot.scad`). The five capsules 
 flat sole are flush with it, 65 mm below the foot origin. The last two follow the toe
 spring. `lite_biped_debug` keeps its flat debug box.
 
+`lite_biped` also ships an optional convex sole hull with an exactly flat bottom,
+`meshes/collision/<side>_foot_hull.stl`, in the frame of the foot body. The MJCF does not
+reference it. To collide through the hull, replace the capsules of each foot with it:
+
+```python
+import mujoco
+from lite_description import get_foot_hull_path, get_mjcf_path
+
+spec = mujoco.MjSpec.from_file(str(get_mjcf_path("lite_biped")))
+for side in ("left", "right"):
+    foot = spec.body(f"{side}_foot")
+    for geom in [g for g in foot.geoms if g.contype or g.conaffinity]:
+        spec.delete(geom)
+    spec.add_mesh(name=f"{side}_foot_hull", file=str(get_foot_hull_path("lite_biped", side)))
+    # The contact parameters of the lite_biped sole capsules.
+    foot.add_geom(name=f"{side}_foot_collision_0", type=mujoco.mjtGeom.mjGEOM_MESH,
+                  meshname=f"{side}_foot_hull", group=3, condim=3, priority=1,
+                  friction=[0.6, 0.005, 0.0001])
+```
+
+The foot bodies hold their own inertials, so the swap does not change the mass properties.
+
 The `uv.lock` of the consuming project records the commit of this repository. The assets
 thus change only when that project upgrades `lite-description`. No ROS install is required.
 
@@ -127,7 +149,7 @@ Lite-Description/                  # repo root == ament package "lite_descriptio
   package.xml  CMakeLists.txt      # ament (colcon); installs lite_description/robots/<variant>/...
   pyproject.toml                   # pip/uv: builds the lite-description wheel
   lite_description/                # Python package
-    __init__.py                    #   ROBOTS_DIR, VARIANTS, get_urdf_path(), get_mjcf_path()
+    __init__.py                    #   ROBOTS_DIR, VARIANTS, get_urdf_path(), get_mjcf_path(), get_foot_hull_path()
     actuators/                     #   actuator spec tables (velocity/effort/armature)
     workflow/                      #   the generator stages (needs the `cad` extra)
     robots/                        #   per-variant assets, inside the package so a wheel carries them
@@ -139,6 +161,7 @@ Lite-Description/                  # repo root == ament package "lite_descriptio
         urdf/<variant>.urdf        #     flat URDF (GENERATED; the kinematic HUB)
         mjcf/<variant>.xml         #     MJCF (GENERATED; MuJoCo training + deployment sim)
         meshes/visual/*.stl        #     one shared mesh copy
+        meshes/collision/*.stl     #     lite_biped: optional foot hulls, not in the MJCF (GENERATED)
         cad/                       #     generation INPUTS (not in the wheel, not installed):
           config.json              #       Onshape document + export options
           joint_properties.json    #       sim tuning: armature / friction / effort_limit
@@ -185,6 +208,13 @@ uv run lite-description-generate lite_dummy --force
 | `package` | — | registers the variant in the repo-root `CMakeLists.txt` |
 
 The Onshape stage costs about 1000 API requests, which is why it is skipped by default.
+
+The optional foot hull has its own command. It reads the shoe mesh from the generated MJCF
+and writes `meshes/collision/`:
+
+```bash
+uv run lite-description-foot-hull lite_biped
+```
 
 A variant without a `ros2_control.json` generates a model-only package: a description
 macro and a thin assembly, with no `<ros2_control>` block.

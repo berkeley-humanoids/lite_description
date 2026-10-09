@@ -25,6 +25,8 @@ lite-description-onshape-to-urdf = "lite_description.workflow.onshape_to_urdf:ma
 lite-description-finalize-urdf = "lite_description.workflow.finalize_urdf:main"
 lite-description-urdf-to-mjcf = "lite_description.workflow.urdf_to_mjcf:main"
 lite-description-urdf-to-xacro = "lite_description.workflow.urdf_to_xacro:main"
+# The optional sole hull, which the MJCF does not reference.
+lite-description-foot-hull = "lite_description.workflow.foot_hull:main"
 
 [dependency-groups]
 test = [
