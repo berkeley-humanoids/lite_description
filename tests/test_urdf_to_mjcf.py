@@ -1,4 +1,5 @@
 """Tests for the MJCF post-processing steps and the committed MJCF assets."""
+import json
 import xml.etree.ElementTree as ET
 
 import mujoco
@@ -8,12 +9,18 @@ from lite_description import ROBOTS_DIR
 from lite_description.workflow.urdf_to_mjcf import (
     COLLISION_GROUP,
     add_actuators,
+    add_excludes,
+    add_option,
     replace_cylinders_with_capsules,
     set_collision_group,
 )
 
 MJCF_FILES = sorted(ROBOTS_DIR.glob("*/mjcf/*.xml"))
 MJCF_IDS = [p.parent.parent.name for p in MJCF_FILES]
+EXCLUDE_ROBOT_DIRS = sorted(
+    path.parent.parent for path in ROBOTS_DIR.glob("*/cad/physics.json")
+    if json.loads(path.read_text()).get("exclude")
+)
 
 
 def test_replace_cylinders_with_capsules():
@@ -156,3 +163,35 @@ def test_committed_mjcf_loads_and_sensors_are_site_backed(mjcf_path):
             f"{mjcf_path} sensor {name!r} is not site-backed "
             f"(objtype={model.sensor_objtype[i]}); mujoco_ros2_control would abort"
         )
+
+
+def test_add_excludes_writes_one_exclude_per_pair():
+    root = ET.fromstring("<mujoco><worldbody/></mujoco>")
+
+    add_excludes(root, [["pelvis", "left_hip_roll"], ["pelvis", "right_hip_roll"]])
+
+    pairs = [(e.get("body1"), e.get("body2")) for e in root.findall("./contact/exclude")]
+    assert pairs == [("pelvis", "left_hip_roll"), ("pelvis", "right_hip_roll")]
+
+
+def test_add_option_skips_a_comment_only_physics_json():
+    """A physics.json with only a comment and excludes gives no empty <option>."""
+    root = ET.fromstring("<mujoco><compiler/><worldbody/></mujoco>")
+
+    add_option(root, {"_comment": "excludes only"})
+
+    assert root.find("option") is None
+
+
+@pytest.mark.skipif(not EXCLUDE_ROBOT_DIRS, reason="no variant excludes contacts")
+@pytest.mark.parametrize("robot_dir", EXCLUDE_ROBOT_DIRS, ids=[d.name for d in EXCLUDE_ROBOT_DIRS])
+def test_committed_mjcf_carries_the_physics_excludes(robot_dir):
+    pairs = json.loads((robot_dir / "cad" / "physics.json").read_text())["exclude"]
+    model = mujoco.MjModel.from_xml_path(str(robot_dir / "mjcf" / f"{robot_dir.name}.xml"))
+    # MuJoCo stores each exclude as (smaller body id << 16) + larger body id.
+    signatures = set(model.exclude_signature.tolist())
+    for body1, body2 in pairs:
+        ids = sorted(mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, b) for b in (body1, body2))
+        assert min(ids) >= 0, f"{robot_dir.name}: no body {body1!r} or {body2!r}"
+        signature = (ids[0] << 16) + ids[1]
+        assert signature in signatures, f"{robot_dir.name}: {body1} <-> {body2} not excluded"
