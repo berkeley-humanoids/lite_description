@@ -35,13 +35,13 @@
                                lower_limit="-1.5708" upper_limit="1.91986" torque_limit="14"
                                current_limit="16"/>
     <xacro:lite_bimanual_joint name="left_shoulder_yaw" can_id="13" model="rs-00" direction="1"
-                               lower_limit="-1.5708" upper_limit="1.5708" torque_limit="14"
+                               lower_limit="-2.0944" upper_limit="2.0944" torque_limit="14"
                                current_limit="16"/>
     <xacro:lite_bimanual_joint name="left_elbow_pitch" can_id="14" model="rs-00" direction="-1"
                                lower_limit="-2.35619" upper_limit="0.0" torque_limit="14"
                                current_limit="16"/>
     <xacro:lite_bimanual_joint name="left_wrist_yaw" can_id="15" model="rs-05" direction="1"
-                               lower_limit="-2.0944" upper_limit="1.5708" torque_limit="4.0"
+                               lower_limit="-2.0944" upper_limit="2.0944" torque_limit="4.0"
                                current_limit="14"/>
     <xacro:lite_bimanual_joint name="left_wrist_roll" can_id="16" model="rs-05" direction="-1"
                                lower_limit="-0.698132" upper_limit="0.698132" torque_limit="4.0"
@@ -59,13 +59,13 @@
                                lower_limit="-1.91986" upper_limit="1.5708" torque_limit="14"
                                current_limit="16"/>
     <xacro:lite_bimanual_joint name="right_shoulder_yaw" can_id="23" model="rs-00" direction="1"
-                               lower_limit="-1.5708" upper_limit="1.5708" torque_limit="14"
+                               lower_limit="-2.0944" upper_limit="2.0944" torque_limit="14"
                                current_limit="16"/>
     <xacro:lite_bimanual_joint name="right_elbow_pitch" can_id="24" model="rs-00" direction="1"
                                lower_limit="-2.35619" upper_limit="0.0" torque_limit="14"
                                current_limit="16"/>
     <xacro:lite_bimanual_joint name="right_wrist_yaw" can_id="25" model="rs-05" direction="1"
-                               lower_limit="-1.5708" upper_limit="2.0944" torque_limit="4.0"
+                               lower_limit="-2.0944" upper_limit="2.0944" torque_limit="4.0"
                                current_limit="14"/>
     <xacro:lite_bimanual_joint name="right_wrist_roll" can_id="26" model="rs-05" direction="1"
                                lower_limit="-0.698132" upper_limit="0.698132" torque_limit="4.0"

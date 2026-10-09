@@ -1,7 +1,8 @@
 {
     "document_id": "e9ee61a2e2678af2088d9f31",
     "output_format": "urdf",
-    "assembly_name": "Humanoid",
+    "workspace_id": "26c0b8ae0ee1fec90698ed7b",
+    "assembly_name": "Humanoid Export",
     "configuration": "Configuration=Sim",
     "robot_name": "lite",
     "output_filename": "lite",

@@ -3,7 +3,7 @@
     "output_filename": "lite_bimanual",
     "document_id": "e9ee61a2e2678af2088d9f31",
     "workspace_id": "26c0b8ae0ee1fec90698ed7b",
-    "assembly_name": "B",
+    "assembly_name": "Bimanual",
     "configuration": "Configuration=Sim Bimanual",
     "robot_name": "lite_bimanual",
     "ignore": {},
