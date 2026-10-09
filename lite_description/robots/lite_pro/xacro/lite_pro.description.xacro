@@ -163,43 +163,43 @@
       <collision>
         <origin xyz="-0.005 0.057 -0.056" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.034" radius="0.008" />
+          <cylinder length="0.026" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="-0.0055 0.057 -0.0223" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.067" radius="0.008" />
+          <cylinder length="0.059" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="-0.006 0.057 0.0113" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.066" radius="0.008" />
+          <cylinder length="0.058" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="-0.0045 0.057 0.045" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.071" radius="0.008" />
+          <cylinder length="0.063" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="-0.002 0.057 0.0787" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.084" radius="0.008" />
+          <cylinder length="0.076" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="0.001 0.0526 0.1123" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.082" radius="0.008" />
+          <cylinder length="0.074" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="0.004 0.0389 0.146" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.048" radius="0.008" />
+          <cylinder length="0.04" radius="0.008" />
         </geometry>
       </collision>
       <visual>
@@ -406,43 +406,43 @@
       <collision>
         <origin xyz="0.005 0.057 -0.056" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.034" radius="0.008" />
+          <cylinder length="0.026" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="0.0055 0.057 -0.0223" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.067" radius="0.008" />
+          <cylinder length="0.059" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="0.006 0.057 0.0113" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.066" radius="0.008" />
+          <cylinder length="0.058" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="0.0045 0.057 0.045" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.071" radius="0.008" />
+          <cylinder length="0.063" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="0.002 0.057 0.0787" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.084" radius="0.008" />
+          <cylinder length="0.076" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="-0.001 0.0526 0.1123" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.082" radius="0.008" />
+          <cylinder length="0.074" radius="0.008" />
         </geometry>
       </collision>
       <collision>
         <origin xyz="-0.004 0.0389 0.146" rpy="1.5708 0 1.5708" />
         <geometry>
-          <cylinder length="0.048" radius="0.008" />
+          <cylinder length="0.04" radius="0.008" />
         </geometry>
       </collision>
       <visual>
