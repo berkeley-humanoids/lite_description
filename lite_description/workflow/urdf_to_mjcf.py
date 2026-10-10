@@ -8,7 +8,8 @@ Post-processing replaces cylinder geoms with capsules, moves the collision geoms
 geom group 3, injects the ``<option>`` physics tuning from ``cad/physics.json``,
 synthesizes one ``<position>`` actuator per actuated joint, and sets per-joint
 frictionloss and armature from ``cad/joint_properties.json``.
-Floating-base, IMU and contact handling are per-variant opt-ins, also from physics.json.
+Floating-base, IMU, contact and exclude handling are per-variant opt-ins, also from
+physics.json.
 
 The compiled model is parsed once and written once, so the intermediate states never
 reach disk. Mesh resolution is decoupled from the URDF's own relative paths: mesh refs
@@ -159,9 +160,11 @@ def set_collision_group(root: ET.Element) -> int:
 def add_option(root: ET.Element, options: dict) -> None:
     """Set the MuJoCo ``<option>`` attributes from physics.json.
 
-    A variant without physics.json gets no ``<option>`` element at all, rather than an
-    empty one, so its MJCF keeps MuJoCo's own defaults visible.
+    A variant without physics.json, or whose physics.json sets no option, gets no
+    ``<option>`` element at all, rather than an empty one, so its MJCF keeps MuJoCo's own
+    defaults visible.
     """
+    options = {key: value for key, value in options.items() if not key.startswith("_")}
     if not options:
         return
     option = root.find("option")
@@ -170,8 +173,7 @@ def add_option(root: ET.Element, options: dict) -> None:
         compiler = root.find("compiler")
         root.insert(list(root).index(compiler) + 1 if compiler is not None else 0, option)
     for key, value in options.items():
-        if not key.startswith("_"):
-            option.set(key, str(value))
+        option.set(key, str(value))
 
 
 def add_actuators(root: ET.Element, joint_properties: dict) -> None:
@@ -332,6 +334,20 @@ def patch_contacts(root: ET.Element, contact: dict) -> None:
     )
 
 
+def add_excludes(root: ET.Element, pairs: list[list[str]]) -> None:
+    """Exclude the contacts between each pair of bodies in the ``exclude`` of physics.json.
+
+    MuJoCo drops the contacts of a body with its parent only. A collider that overlaps a
+    body farther down the chain at rest needs an explicit exclude. For example, the pelvis
+    capsule across the hip-pitch motors overlaps the butt capsule on each hip_roll.
+    """
+    section = _section(root, "contact", before="actuator")
+    for body1, body2 in pairs:
+        ET.SubElement(section, "exclude", {"body1": body1, "body2": body2})
+    _indent_section(root, section)
+    print(f"Excluded the contacts of {len(pairs)} body pair(s)")
+
+
 def apply_joint_properties(root: ET.Element, joint_properties: dict) -> None:
     """Set frictionloss and armature on every non-free joint."""
     for joint in root.iter("joint"):
@@ -355,11 +371,12 @@ def generate(robot_dir: Path) -> list[Path]:
 
     physics_path = cad_dir / "physics.json"
     options = json.loads(physics_path.read_text()) if physics_path.exists() else {}
-    # Floating base, IMU and contact are per-variant opt-ins. Pop them so they do not
-    # leak into the MuJoCo <option> tag.
+    # Floating base, IMU, contact and exclude are per-variant opt-ins. Pop them so they
+    # do not leak into the MuJoCo <option> tag.
     freejoint = options.pop("freejoint", False)
     imu = options.pop("imu", None)
     contact = options.pop("contact", None)
+    exclude = options.pop("exclude", None)
 
     with tempfile.TemporaryDirectory(prefix="lite_description_mjcf_") as tmp:
         root = compile_mjcf(
@@ -376,6 +393,8 @@ def generate(robot_dir: Path) -> list[Path]:
     moved = set_collision_group(root)
     print(f"Moved {moved} collision geom(s) to group {COLLISION_GROUP}")
     add_option(root, options)
+    if exclude:
+        add_excludes(root, exclude)
     add_actuators(root, joint_properties)
     if imu:
         add_imu_site_and_sensors(root, imu)

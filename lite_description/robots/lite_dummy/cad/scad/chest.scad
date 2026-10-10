@@ -1,13 +1,7 @@
 % scale(1000) import("chest.stl");
 
-translate([0, 25, 180])
-rotate([13, 0, 0])
-cylinder(r=53, h=160, center=true);
+// Torso. Two spheres on the torso axis, r74 below and r58 above. The radii are
+// limited so that the upper arms can hang down without contact.
 
-translate([40, 15, 220])
-rotate([13, -10, 0])
-cube([40, 80, 180], center=true);
-
-translate([-40, 15, 220])
-rotate([13, 10, 0])
-cube([40, 80, 180], center=true);
+translate([-0.27, 30.35, 167.36]) sphere(r=74);
+translate([0.03, 3.87, 278.24]) sphere(r=58);

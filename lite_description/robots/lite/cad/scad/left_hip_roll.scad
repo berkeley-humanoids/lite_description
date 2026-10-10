@@ -1,4 +1,8 @@
 % scale(1000) import("left_hip_roll.stl");
 
-translate([-70, 0, -200])
-cylinder(r=50, h=150, center=true);
+// Butt. One capsule flush with the rear face of the hip-roll shell. That face leans
+// 24 deg from vertical. At rest, the capsule overlaps the pelvis capsule across the
+// hip motors, so physics.json excludes pelvis <-> hip_roll.
+
+translate([-70, -32.85, -45.73]) rotate([0, 24, -90])
+    cylinder(r=51, h=83.15, center=true);

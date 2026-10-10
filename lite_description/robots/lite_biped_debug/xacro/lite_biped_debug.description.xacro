@@ -16,6 +16,18 @@
         <inertia ixx="0.00987937" ixy="3.9803e-08" ixz="-0.000115563" iyy="0.00823366" iyz="-5.1965e-08" izz="0.00638151" />
       </inertial>
       <!-- Part pelvis_parts -->
+      <collision>
+        <origin xyz="0.00964 1e-05 0.09166" rpy="-1.5708 1.5708 0" />
+        <geometry>
+          <cylinder length="0.03903" radius="0.069" />
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.02 -1e-05 -0" rpy="-1.5708 1.5708 0" />
+        <geometry>
+          <cylinder length="0.14449" radius="0.052" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="0.0137049 6.97587e-07 0.0692011" rpy="0 -0 0" />
         <geometry>
@@ -68,9 +80,9 @@
       </inertial>
       <!-- Part left_hip_roll_parts -->
       <collision>
-        <origin xyz="0 0.181098 -0.0871979" rpy="1.22173 -0 0" />
+        <origin xyz="0 0.0248964 -0.0653033" rpy="3.14159 1.50098 1.5708" />
         <geometry>
-          <cylinder length="0.15" radius="0.05" />
+          <cylinder length="0.08315" radius="0.051" />
         </geometry>
       </collision>
       <visual>
@@ -91,6 +103,12 @@
         <inertia ixx="0.00856423" ixy="8.05553e-07" ixz="-0.000337563" iyy="0.00874707" iyz="1.62929e-07" izz="0.00192866" />
       </inertial>
       <!-- Part left_hip_yaw_parts -->
+      <collision>
+        <origin xyz="-0.005 -0 -0.2575" rpy="0 0.0689405 0" />
+        <geometry>
+          <cylinder length="0.14534" radius="0.055" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="0.00130442 -2.2783e-05 -0.237299" rpy="-0 0 -0" />
         <geometry>
@@ -110,9 +128,9 @@
       </inertial>
       <!-- Part left_knee_pitch_parts -->
       <collision>
-        <origin xyz="-0.015 0.19 0" rpy="1.5708 1.5708 0" />
+        <origin xyz="-0.015 0.1519 0" rpy="-1.5708 -1.5708 0" />
         <geometry>
-          <cylinder length="0.12" radius="0.045" />
+          <cylinder length="0.30379" radius="0.044" />
         </geometry>
       </collision>
       <visual>
@@ -164,9 +182,9 @@
     <!-- Link left_foot -->
     <link name="left_foot">
       <inertial>
-        <origin xyz="-0.000591034 0.0225869 0.01872" rpy="0 0 0" />
-        <mass value="0.326223" />
-        <inertia ixx="0.000536048" ixy="-3.34731e-06" ixz="5.216e-06" iyy="0.000602621" iyz="1.20169e-05" izz="0.000181126" />
+        <origin xyz="-0.000733289 0.0228285 0.0197452" rpy="0 0 0" />
+        <mass value="0.309507" />
+        <inertia ixx="0.000513563" ixy="-3.54294e-06" ixz="6.31014e-06" iyy="0.000570924" iyz="1.33689e-05" izz="0.000170529" />
       </inertial>
       <!-- Part left_foot_parts -->
       <collision>
@@ -176,7 +194,7 @@
         </geometry>
       </collision>
       <visual>
-        <origin xyz="-0.000591034 0.0225869 0.01872" rpy="1.5708 -1.5708 0" />
+        <origin xyz="-0.000733289 0.0228285 0.0197452" rpy="1.5708 -1.5708 0" />
         <geometry>
           <mesh filename="${mesh_root}/left_foot_visual.stl" />
         </geometry>
@@ -275,9 +293,9 @@
       </inertial>
       <!-- Part right_hip_roll_parts -->
       <collision>
-        <origin xyz="1.40064e-07 0.181098 -0.0871974" rpy="1.22173 0 -0" />
+        <origin xyz="1.40064e-07 0.0248965 -0.0653029" rpy="-3.14159 1.50098 1.5708" />
         <geometry>
-          <cylinder length="0.15" radius="0.05" />
+          <cylinder length="0.08315" radius="0.051" />
         </geometry>
       </collision>
       <visual>
@@ -298,6 +316,12 @@
         <inertia ixx="0.00856421" ixy="-7.98006e-07" ixz="-0.000337552" iyy="0.00874705" iyz="-2.23692e-07" izz="0.00192867" />
       </inertial>
       <!-- Part right_hip_yaw_parts -->
+      <collision>
+        <origin xyz="-0.005 -0 -0.2575" rpy="-0 0.0689405 -0" />
+        <geometry>
+          <cylinder length="0.14534" radius="0.055" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="0.00130421 2.35733e-05 -0.237299" rpy="0 0 -0" />
         <geometry>
@@ -317,9 +341,9 @@
       </inertial>
       <!-- Part right_knee_pitch_parts -->
       <collision>
-        <origin xyz="-0.015 0.19 0" rpy="1.5708 1.5708 0" />
+        <origin xyz="-0.015 0.1519 0" rpy="-1.5708 -1.5708 0" />
         <geometry>
-          <cylinder length="0.12" radius="0.045" />
+          <cylinder length="0.30379" radius="0.044" />
         </geometry>
       </collision>
       <visual>
@@ -371,9 +395,9 @@
     <!-- Link right_foot -->
     <link name="right_foot">
       <inertial>
-        <origin xyz="0.000591036 0.0225869 0.01872" rpy="0 0 0" />
-        <mass value="0.326223" />
-        <inertia ixx="0.000536048" ixy="3.34731e-06" ixz="-5.21602e-06" iyy="0.000602621" iyz="1.20169e-05" izz="0.000181126" />
+        <origin xyz="0.000733292 0.0228286 0.0197451" rpy="0 0 0" />
+        <mass value="0.309507" />
+        <inertia ixx="0.000513563" ixy="3.54295e-06" ixz="-6.31016e-06" iyy="0.000570924" iyz="1.33689e-05" izz="0.000170529" />
       </inertial>
       <!-- Part right_foot_parts -->
       <collision>
@@ -383,7 +407,7 @@
         </geometry>
       </collision>
       <visual>
-        <origin xyz="0.000591036 0.0225869 0.01872" rpy="1.5708 -1.5708 0" />
+        <origin xyz="0.000733292 0.0228286 0.0197451" rpy="1.5708 -1.5708 0" />
         <geometry>
           <mesh filename="${mesh_root}/right_foot_visual.stl" />
         </geometry>

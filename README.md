@@ -81,6 +81,31 @@ Each function returns a path inside the installed package. A name that is not in
 `VARIANTS` raises `ValueError`. A URDF or MJCF reaches its meshes by a path relative to its
 own directory, so load the file where it lies instead of copying it out alone.
 
+#### Colliders
+
+Each rigid segment has its own collider, in most cases one capsule. A segment has the
+same collider in every variant that has the segment:
+
+| Segment | Collider | Body |
+|---|---|---|
+| pelvis | r69 capsule over the pelvis block, r52 capsule across both hip-pitch motors | `pelvis` |
+| butt | r51 capsule flush with the rear face of the hip-roll shell | `<side>_hip_roll` |
+| thigh | r55 capsule, hip-yaw axis to knee axis | `<side>_hip_yaw` |
+| shank | r44 capsule, knee to ankle | `<side>_knee_pitch` |
+| torso | r74 and r58 spheres on the torso axis | `chest` |
+| head | r97 capsule | `head` |
+| upper arm, forearm | r35 and r32 capsules | `<side>_shoulder_yaw`, `<side>_elbow_pitch` |
+| hand | two or three capsules over the palm and the fingers | `<side>_hand` |
+
+At rest, the hip-motor capsule overlaps both butt capsules. Thus `physics.json` excludes
+the contacts of `pelvis` with each `<side>_hip_roll`. The scad file of each segment, in
+`cad/scad/`, tells why its collider has its shape.
+
+`lite_biped`, `lite` and `lite_pro` share one shoe collider: seven r8 capsules across the
+sole, from the heel to the toe (`cad/scad/<side>_foot.scad`). The five capsules under the
+flat sole are flush with it, 65 mm below the foot origin. The last two follow the toe
+spring. `lite_biped_debug` keeps its flat debug box.
+
 The `uv.lock` of the consuming project records the commit of this repository. The assets
 thus change only when that project upgrades `lite-description`. No ROS install is required.
 
@@ -117,7 +142,7 @@ Lite-Description/                  # repo root == ament package "lite_descriptio
         cad/                       #     generation INPUTS (not in the wheel, not installed):
           config.json              #       Onshape document + export options
           joint_properties.json    #       sim tuning: armature / friction / effort_limit
-          physics.json             #       MJCF <option>, freejoint, IMU, contact (optional)
+          physics.json             #       MJCF <option>, freejoint, IMU, contact, exclude (optional)
           ros2_control.json        #       ROS hardware map (optional)
           scad/                    #       collider sources
 ```

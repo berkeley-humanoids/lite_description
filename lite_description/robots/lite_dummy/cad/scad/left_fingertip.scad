@@ -1,10 +1,11 @@
 % scale(1000) import("left_fingertip.stl");
-% scale(1000) import("left_wrist_pitch.stl");
 
-translate([-704, -7, 22])
-rotate([0, 90, 0])
-cylinder(r=6, h=60);
+// Hand. Two capsules.
 
-translate([-580, 10, 0])
-rotate([0, 90, 0])
-cylinder(r=35, h=40, center=true);
+// The palm.
+translate([-555.91, 5.21, 3.15]) rotate([0, 84.56, 178.81])
+    cylinder(r=35, h=103.75, center=true);
+
+// The finger that extends past the palm: one thin capsule.
+translate([-680.41, -7.04, 22.51]) rotate([0, 91.48, 179.46])
+    cylinder(r=5, h=56.04, center=true);

@@ -1,0 +1,4 @@
+{
+    "_comment": "lite sets no MuJoCo <option>, so the MJCF keeps the MuJoCo defaults. exclude: at rest, the pelvis capsule across the hip motors overlaps both butt (hip_roll) capsules.",
+    "exclude": [["pelvis", "left_hip_roll"], ["pelvis", "right_hip_roll"]]
+}
