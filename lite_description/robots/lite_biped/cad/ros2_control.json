@@ -22,7 +22,6 @@
         "use_linkage": "true"
     },
 
-    "base_link": {"name": "base_link", "child": "pelvis"},
 
     "_comment_imu": "Sim/mock: the base_imu <sensor> lives in the combined block, backed by MujocoSystem's MJCF sensors. Real: a standalone <ros2_control type='sensor'> block (real_block_name) driven by real_plugin (Yahboom WIT USB IMU on imu_port), exposing the SAME interfaces so imu_sensor_broadcaster republishes /imu/data identically -- no separate driver node.",
     "imu": {"name": "base_imu", "real_plugin": "humanoid_devices_witmotion/WitImuSensor", "real_block_name": "LiteBipedIMU"},

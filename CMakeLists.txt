@@ -3,35 +3,13 @@ project(lite_description)
 
 find_package(ament_cmake REQUIRED)
 
-# Lite variants live under lite_description/robots/<robot>/, inside the Python
-# package that ships them in a wheel. They install to
-# share/lite_description/robots/<robot>/, so package:// URLs and $(find ...) do
-# not depend on the source layout. Each ships generated, installable artifacts
-# (xacro / urdf / mjcf / meshes). The cad/ subdir holds generation INPUTS
-# (Onshape config, joint_properties.json, physics.json, ros2_control.json, scad)
-# and is intentionally NOT installed.
-# The generator's package stage adds each new robot to this list.
-set(ROBOTS
-  lite
-  lite_bimanual
-  lite_biped
-  lite_biped_debug
-  lite_dummy
-  lite_pro
+# Each variant installs to share/lite_description/robots/<variant>/, so package:// URLs
+# and $(find ...) do not depend on the source layout. The cad/ inputs stay out.
+install(
+  DIRECTORY lite_description/robots
+  DESTINATION share/${PROJECT_NAME}
+  PATTERN cad EXCLUDE
 )
-
-# Install only the installable subdirs that exist for each robot (defensive:
-# a model-only robot may have no ros2_control xacro, etc.).
-foreach(robot ${ROBOTS})
-  foreach(sub xacro urdf mjcf meshes)
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/lite_description/robots/${robot}/${sub})
-      install(
-        DIRECTORY lite_description/robots/${robot}/${sub}
-        DESTINATION share/${PROJECT_NAME}/robots/${robot}
-      )
-    endif()
-  endforeach()
-endforeach()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

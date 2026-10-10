@@ -192,7 +192,7 @@ def generate(robot_dir: Path) -> list[Path]:
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Build the optional sole hull of a robot's shoes.")
-    parser.add_argument("robot", help="Variant name (under lite_description/robots/) or a path to a robot dir.")
+    parser.add_argument("robot", help="Variant name, under lite_description/robots/.")
     args = parser.parse_args(argv)
     for path in generate(robot_model.resolve_robot_dir(args.robot)):
         print(f"Wrote {path}")
