@@ -26,8 +26,7 @@ jobs:
         run: uv run pytest -v
 
   ros:
-    # ROS-side checks: the lite_description ament package builds, and every
-    # generated xacro expands to a valid URDF (the ros2_control_demos test).
+    # The ament package builds, and the xacro tests run against the installed package.
     runs-on: ubuntu-latest
     container: ros:jazzy-ros-base
     steps:
@@ -38,6 +37,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends \
             python3-colcon-common-extensions \
+            python3-pytest \
             ros-jazzy-xacro \
             liburdfdom-tools \
             ros-jazzy-ament-cmake \
@@ -54,27 +54,10 @@ jobs:
           cd ws
           colcon build --packages-select lite_description
 
-      - name: Expand every xacro and check_urdf
+      - name: Test the xacro
         shell: bash
         run: |
           source /opt/ros/jazzy/setup.bash
-          # Source the package built in the previous step so the assembly's
-          # `$(find lite_description)/...` xacro includes resolve.
+          # The assembly xacro includes $(find lite_description)/..., the installed package.
           source "$GITHUB_WORKSPACE/ws/install/setup.bash"
-          set -euo pipefail
-          # Each assembly must expand on every backend it supports, not just the
-          # default. Only the real backend emits the per-bus <ros2_control>
-          # blocks that the hardware bring-ups depend on.
-          for assembly in lite_description/robots/*/xacro/*.urdf.xacro; do
-            for backend in \
-              "" \
-              "use_mock_hardware:=false" \
-              "sim_mujoco:=true" \
-              "use_mock_hardware:=false sim_mujoco:=true"; do
-              out="/tmp/$(basename "$assembly" .urdf.xacro).urdf"
-              echo "::group::$assembly [${backend:-default}]"
-              xacro "$assembly" $backend > "$out"
-              check_urdf "$out"
-              echo "::endgroup::"
-            done
-          done
+          python3 -m pytest -v tests/test_ros2_artifacts.py
