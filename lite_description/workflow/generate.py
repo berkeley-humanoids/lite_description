@@ -12,7 +12,6 @@ that each expose ``generate(robot_dir) -> list[Path]``:
   urdf     finalize_urdf   : finalize the hub (weld, harmonize effort, mesh paths)
   mjcf     urdf_to_mjcf    : MuJoCo compile, post-process, <option>
   xacro    urdf_to_xacro   : description macro (+base_link), ros2_control, assembly
-  package                  : register the robot in the repo-root CMakeLists
 
 The onshape stage hits the Onshape API about 1000 times, so it is skipped whenever the
 URDF hub is already committed. Pass ``--force`` to re-export anyway.
@@ -25,36 +24,15 @@ Usage:
 
 import argparse
 from pathlib import Path
-import re
 
 from . import finalize_urdf, onshape_to_urdf, robot_model, urdf_to_mjcf, urdf_to_xacro
 
-STAGES = ("onshape", "urdf", "mjcf", "xacro", "package")
+STAGES = ("onshape", "urdf", "mjcf", "xacro")
 
 
 def _report(stage: str, written: list[Path]) -> None:
     for path in written:
         print(f"[{stage}] wrote {path}")
-
-
-def register_in_cmake(robot_dir: Path) -> None:
-    """Add the robot to the repo-root CMakeLists ROBOTS list, if it is not there."""
-    robot = robot_dir.name
-    cmake = robot_dir.resolve().parents[2] / "CMakeLists.txt"  # <repo>/lite_description/robots/<robot>/
-    if not cmake.exists():
-        print(f"[package] no CMakeLists at {cmake}; skipping")
-        return
-    text = cmake.read_text()
-    match = re.search(r"set\(ROBOTS(?P<body>.*?)\)", text, re.DOTALL)
-    if not match:
-        print("[package] ROBOTS block not found; skipping")
-        return
-    listed = match.group("body").split()
-    if robot in listed:
-        return
-    block = "set(ROBOTS\n  " + "\n  ".join(sorted([*listed, robot])) + "\n)"
-    cmake.write_text(text[: match.start()] + block + text[match.end():])
-    print(f"[package] registered {robot} in {cmake.name}")
 
 
 def generate(
@@ -89,8 +67,6 @@ def generate(
             _report("mjcf", urdf_to_mjcf.generate(robot_dir))
         elif stage == "xacro":
             _report("xacro", urdf_to_xacro.generate(robot_dir, package=package))
-        elif stage == "package":
-            register_in_cmake(robot_dir)
 
 
 def main(argv: list[str] | None = None) -> None:

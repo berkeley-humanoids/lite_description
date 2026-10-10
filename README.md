@@ -205,7 +205,6 @@ uv run lite-description-generate lite_dummy --force
 | `urdf` | `urdf/<variant>.urdf`, `joint_properties.json` | finalized `urdf/<variant>.urdf` (welded, effort harmonised, idempotent) |
 | `mjcf` | `urdf/<variant>.urdf`, `joint_properties.json`, `physics.json` | `mjcf/<variant>.xml` |
 | `xacro` | `urdf/<variant>.urdf`, `ros2_control.json` | `xacro/<variant>.*.xacro` (`base_link` injected here) |
-| `package` | — | registers the variant in the repo-root `CMakeLists.txt` |
 
 The Onshape stage costs about 1000 API requests, which is why it is skipped by default.
 
