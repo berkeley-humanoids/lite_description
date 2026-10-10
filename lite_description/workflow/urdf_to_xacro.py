@@ -1,36 +1,30 @@
-"""Generate the ROS 2 xacro artifacts for a robot from its URDF hub and ros2_control.json.
+"""Generate the ROS 2 xacro of a robot from its URDF hub and ``cad/ros2_control.json``.
 
-Writes three files into ``<robot_dir>/xacro/``, following the ``ros2_control_demos``
-split of a reusable model macro, a separate hardware file, and a thin assembly:
+The three files in ``xacro/`` split as in ros2_control_demos:
 
-* ``<robot>.description.xacro``  -- ``<xacro:macro name="<robot>_description">`` around the
-  CAD kinematics: a ``base_link`` root, ``${mesh_root}``-parameterised mesh paths, effort
-  limits harmonised to ``joint_properties.json``.
-* ``<robot>.ros2_control.xacro`` -- the hardware macros: a joint macro, per-group joint
-  macros, one combined block for the mock and MuJoCo backends, per-bus blocks for real
-  hardware, and a top macro that dispatches between them.
-* ``<robot>.urdf.xacro``         -- the assembly: declares the args, includes the two
-  macros above and instantiates them.
+* ``<robot>.description.xacro``: the hub kinematics in a macro, under a massless
+  ``base_link``, with ``${mesh_root}`` mesh paths.
+* ``<robot>.ros2_control.xacro``: the hardware macros. These are the joint macros, a
+  macro for each joint group, the block macros of the backends, and a top macro that
+  selects a backend.
+* ``<robot>.urdf.xacro``: the assembly, which declares the args and calls the two macros.
 
-Backend selection follows the Universal Robots description convention: one boolean per
-non-real backend (``use_mock_hardware``, ``sim_mujoco``), real hardware as the fallback
-when both are false. The switches reach only the ``<hardware>`` plugin choice. Joint
-macros are backend-agnostic and always emit their hardware params, because every backend
-ignores the params it does not know.
+A variant without ``ros2_control.json`` gets no hardware file. The backend switches follow
+the Universal Robots description: one boolean for each backend that is not the real
+hardware, and the real hardware when both are false. The switches select the
+``<hardware>`` plugin only. The position limits come from the URDF.
 
-Every ``${...}`` below is a xacro expression, written ``${{...}}`` inside an f-string.
-``$(arg ...)`` and ``$(find ...)`` use parentheses and need no escaping. Position limits
-come from the URDF and are never re-declared in ros2_control.json.
+Each ``${...}`` below is a xacro expression, written ``${{...}}`` in an f-string.
 """
 
-import argparse
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
 from . import robot_model
 
-DEFAULT_PACKAGE = robot_model.DEFAULT_PACKAGE
+PACKAGE = "lite_description"
+XACRO_NS = "http://www.ros.org/wiki/xacro"
 
 # Backend-switch args. Both false selects real hardware.
 MOCK_ARG = "use_mock_hardware"
@@ -97,33 +91,29 @@ def _sensor_element(name: str, indent: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def build_description_xacro(
-    urdf_path: Path,
-    robot: str,
-    joint_properties: dict,
-    base_link: dict,
-    package: str = DEFAULT_PACKAGE,
-) -> str:
-    """Return the description xacro: the CAD kinematics wrapped in a reusable macro."""
-    root = robot_model.parse(urdf_path).getroot()
-    robot_model.harmonize_effort(root, joint_properties)
+def build_description_xacro(root: ET.Element, robot: str) -> str:
+    """Return the description xacro: the hub kinematics in a macro, under ``base_link``.
+
+    KDL and robot_state_publisher need a root link without inertia, and the CAD root link
+    has inertia. Thus a massless ``base_link`` holds the CAD root link through a fixed joint.
+    """
+    child = robot_model.root_link(root)
     robot_model.rewrite_mesh_filenames(root, lambda name: f"${{mesh_root}}/{name}")
-    robot_model.inject_base_link(root, base_link["name"], base_link["child"])
+    joint = ET.Element("joint", {"name": f"base_link_to_{child}", "type": "fixed"})
+    ET.SubElement(joint, "parent", {"link": "base_link"})
+    ET.SubElement(joint, "child", {"link": child})
+    ET.SubElement(joint, "origin", {"xyz": "0 0 0", "rpy": "0 0 0"})
 
-    ET.register_namespace("xacro", robot_model.XACRO_NS)
-    out_root = ET.Element("robot")
+    ET.register_namespace("xacro", XACRO_NS)
+    robot_element = ET.Element("robot")
     macro = ET.SubElement(
-        out_root,
-        f"{{{robot_model.XACRO_NS}}}macro",
-        {
-            "name": f"{robot}_description",
-            "params": f"mesh_root:=package://{package}/robots/{robot}/meshes/visual",
-        },
+        robot_element,
+        f"{{{XACRO_NS}}}macro",
+        {"name": f"{robot}_description", "params": f"mesh_root:=package://{PACKAGE}/robots/{robot}/meshes/visual"},
     )
-    for element in list(root):
-        macro.append(element)
-
-    return f'<?xml version="1.0"?>\n{_banner(robot)}\n{robot_model.to_string(out_root)}\n'
+    macro.extend([ET.Element("link", {"name": "base_link"}), joint, *root])
+    ET.indent(robot_element, space="  ")
+    return f'<?xml version="1.0"?>\n{_banner(robot)}\n{ET.tostring(robot_element, encoding="unicode")}\n'
 
 
 # ---------------------------------------------------------------------------
@@ -213,11 +203,10 @@ def _combined_macro(robot: str, groups: list[dict], backends: dict, imu: dict | 
     """Return the mock and MuJoCo macro: one block per bus, named as the real one."""
     blocks = []
     for group in groups:
-        # A gpio only under mock. The real backend exports these two through
-        # export_unlisted_state_interface_descriptions(), and MujocoSystem
-        # overrides the deprecated by-value export_state_interfaces(), which
-        # bypasses the base class's gpio handling -- declaring them there would
-        # promise interfaces that never appear.
+        # Only mock declares the safety gpio. The real backend exports the two interfaces
+        # from export_unlisted_state_interface_descriptions(). MujocoSystem overrides the
+        # by-value export_state_interfaces(), which skips the gpio handling of the base
+        # class, so MujocoSystem would never export them.
         safety = (
             f'\n      <xacro:unless value="${{{SIM_ARG}}}">\n'
             f'        <gpio name="{group["block_name"]}">\n'
@@ -237,9 +226,9 @@ def _combined_macro(robot: str, groups: list[dict], backends: dict, imu: dict | 
       </hardware>
       <xacro:{robot}_{group["name"]}_joints/>{safety}
     </ros2_control>""")
-    if imu and imu.get("real_block_name"):
-        # The real backend gives the IMU its own sensor component, so sim matches
-        # the name. Only MuJoCo backs the state interfaces; mock has no source.
+    if imu:
+        # The real backend has a sensor component for the IMU, so sim has one with the
+        # same name. Mock has no source for the IMU.
         blocks.append(
             f'    <xacro:if value="${{{SIM_ARG}}}">\n'
             f'      <ros2_control name="{imu["real_block_name"]}" type="sensor">\n'
@@ -249,14 +238,6 @@ def _combined_macro(robot: str, groups: list[dict], backends: dict, imu: dict | 
             f'{_sensor_element(imu["name"], "        ")}\n'
             f'      </ros2_control>\n'
             f'    </xacro:if>')
-    elif imu:
-        # A sim-only IMU has no real component to match, so it stays nested in the
-        # first bus block rather than inventing a component name of its own.
-        nested = (
-            f'\n      <xacro:if value="${{{SIM_ARG}}}">\n'
-            f'{_sensor_element(imu["name"], "        ")}\n'
-            f'      </xacro:if>')
-        blocks[0] = blocks[0].replace("\n    </ros2_control>", f"{nested}\n    </ros2_control>")
     body = "\n".join(blocks)
     return f"""  <!-- Mock and MuJoCo backends. One block per bus, carrying the same component
        names as the real backend, so anything keyed by component name means the
@@ -283,9 +264,7 @@ def _real_macro(
       </hardware>
       <xacro:{robot}_{group["name"]}_joints{use_linkage}/>
     </ros2_control>""")
-    # An IMU without a real_plugin exists only in sim, backed by MujocoSystem inside the
-    # combined block, so real hardware gets no sensor component for it.
-    if imu and imu.get("real_plugin"):
+    if imu:
         blocks.append(f"""    <ros2_control name="{imu["real_block_name"]}" type="sensor">
       <hardware>
         <plugin>{imu["real_plugin"]}</plugin>
@@ -327,12 +306,6 @@ def build_ros2_control_xacro(robot: str, ros2_control: dict, limits: dict) -> st
         group for group, joints in joints_by_group.items()
         if any(j.get("linkage") for j in joints)
     }
-    empty = [g["name"] for g in ros2_control["groups"] if not joints_by_group.get(g["name"])]
-    if empty:
-        raise ValueError(
-            f"{robot}: groups {empty} declare a bus but list no joints. Give each group "
-            f"at least one joint, or drop the group."
-        )
 
     command = ros2_control["interfaces"]["command"]
     state = ros2_control["interfaces"]["state"]
@@ -365,7 +338,7 @@ def build_ros2_control_xacro(robot: str, ros2_control: dict, limits: dict) -> st
     body = "\n\n".join(parts)
     return (
         f'<?xml version="1.0"?>\n{_banner(robot)}\n'
-        f'<robot xmlns:xacro="http://www.ros.org/wiki/xacro">\n\n{body}\n\n</robot>\n'
+        f'<robot xmlns:xacro="{XACRO_NS}">\n\n{body}\n\n</robot>\n'
     )
 
 
@@ -374,13 +347,13 @@ def build_ros2_control_xacro(robot: str, ros2_control: dict, limits: dict) -> st
 # ---------------------------------------------------------------------------
 
 
-def build_assembly_xacro(robot: str, ros2_control: dict | None, package: str = DEFAULT_PACKAGE) -> str:
+def build_assembly_xacro(robot: str, ros2_control: dict | None) -> str:
     """Return the assembly xacro. Without a ros2_control spec it emits the model alone."""
-    includes = f'  <xacro:include filename="$(find {package})/robots/{robot}/xacro/{robot}.description.xacro"/>'
+    includes = f'  <xacro:include filename="$(find {PACKAGE})/robots/{robot}/xacro/{robot}.description.xacro"/>'
     if ros2_control is None:
         return f"""<?xml version="1.0"?>
 {_banner(robot)}
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="{robot}">
+<robot xmlns:xacro="{XACRO_NS}" name="{robot}">
 
 {includes}
 
@@ -393,11 +366,11 @@ def build_assembly_xacro(robot: str, ros2_control: dict | None, package: str = D
     forwarded = "\n".join(f'    {arg}="$(arg {arg})"' for arg in args)
     return f"""<?xml version="1.0"?>
 {_banner(robot)}
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="{robot}">
+<robot xmlns:xacro="{XACRO_NS}" name="{robot}">
 {declarations}
 
 {includes}
-  <xacro:include filename="$(find {package})/robots/{robot}/xacro/{robot}.ros2_control.xacro"/>
+  <xacro:include filename="$(find {PACKAGE})/robots/{robot}/xacro/{robot}.ros2_control.xacro"/>
 
   <xacro:{robot}_description/>
 
@@ -412,50 +385,28 @@ def build_assembly_xacro(robot: str, ros2_control: dict | None, package: str = D
 # ---------------------------------------------------------------------------
 
 
-def generate(robot_dir: Path, package: str = DEFAULT_PACKAGE) -> list[Path]:
-    """Write the xacro artifacts for one ``robots/<robot>/`` directory."""
+def build(robot_dir: Path) -> dict[str, str]:
+    """Return the xacro files of a robot as {file name: text}."""
     robot = robot_dir.name
-    hub_urdf = robot_dir / "urdf" / f"{robot}.urdf"
-    joint_properties = json.loads((robot_dir / "cad" / "joint_properties.json").read_text())
-
-    # ros2_control.json is optional. A robot without one (the full lite) generates a
-    # model-only package: a description macro and a thin assembly, no <ros2_control>.
-    # Deployment wiring lives only where the hardware is known.
+    root = robot_model.parse(robot_dir / "urdf" / f"{robot}.urdf").getroot()
     ros2_control_path = robot_dir / "cad" / "ros2_control.json"
     ros2_control = json.loads(ros2_control_path.read_text()) if ros2_control_path.exists() else None
-
-    root = robot_model.parse(hub_urdf).getroot()
-    base_link = (ros2_control or {}).get("base_link") or {
-        "name": "base_link", "child": robot_model.root_link(root),
-    }
-
-    outputs = {
-        f"{robot}.description.xacro": build_description_xacro(
-            hub_urdf, robot, joint_properties, base_link, package),
-        f"{robot}.urdf.xacro": build_assembly_xacro(robot, ros2_control, package),
+    files = {
+        f"{robot}.description.xacro": build_description_xacro(root, robot),
+        f"{robot}.urdf.xacro": build_assembly_xacro(robot, ros2_control),
     }
     if ros2_control is not None:
-        outputs[f"{robot}.ros2_control.xacro"] = build_ros2_control_xacro(
+        files[f"{robot}.ros2_control.xacro"] = build_ros2_control_xacro(
             robot, ros2_control, robot_model.joint_limits(root))
+    return files
 
+
+def generate(robot_dir: Path) -> list[Path]:
+    """Write the xacro files of a robot."""
     xacro_dir = robot_dir / "xacro"
-    xacro_dir.mkdir(parents=True, exist_ok=True)
+    xacro_dir.mkdir(exist_ok=True)
     written = []
-    for filename, content in outputs.items():
-        path = xacro_dir / filename
-        path.write_text(content)
-        written.append(path)
+    for name, text in build(robot_dir).items():
+        (xacro_dir / name).write_text(text)
+        written.append(xacro_dir / name)
     return written
-
-
-def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Generate ROS 2 xacro files for a robot.")
-    parser.add_argument("robot", help="Variant name (under lite_description/robots/) or a path to a robot dir.")
-    parser.add_argument("--package", default=DEFAULT_PACKAGE, help="Owning ament package name.")
-    args = parser.parse_args(argv)
-    for path in generate(robot_model.resolve_robot_dir(args.robot), package=args.package):
-        print(f"Wrote {path}")
-
-
-if __name__ == "__main__":
-    main()

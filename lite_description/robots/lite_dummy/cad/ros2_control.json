@@ -20,7 +20,6 @@
         "calibration_file": ""
     },
 
-    "base_link": {"name": "base_link", "child": "chest"},
 
     "_comment_neck": "The neck actuators are not on the bus. Its kinematic links live in the description xacro for robot_state_publisher, but it gets no group and no joints here until the hardware is wired (CAN ids 31..33 by convention).",
 

@@ -20,7 +20,6 @@
         "calibration_file": ""
     },
 
-    "base_link": {"name": "base_link", "child": "chest"},
 
     "groups": [
         {"name": "left_arm",  "block_name": "LiteLeftArm",  "can_interface_arg": "can_interface_left"},

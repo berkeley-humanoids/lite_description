@@ -1,18 +1,10 @@
-"""Stage 1 of the converter: export the raw URDF and meshes from Onshape CAD.
+"""Export the URDF hub and the visual meshes of a robot from Onshape.
 
-Wraps the external ``onshape-to-robot`` tool and normalizes its output into the
-robots/<robot>/ layout:
+This stage runs onshape-to-robot on ``cad/`` and moves its output to ``urdf/<robot>.urdf``
+and ``meshes/visual/``. An export costs about 1000 Onshape API requests.
 
-    robots/<robot>/
-      cad/config.json          (input: Onshape doc + export options)
-      cad/scad/                (input: custom collider sources)
-      urdf/<robot>.urdf        (output: the flat URDF, the committed kinematic hub)
-      meshes/visual/*.stl      (output: merged visual meshes, one copy)
-
-The flat URDF is the committed, cacheable hub. The ``urdf`` finalize stage then welds and
-harmonizes it, and the mjcf and xacro stages derive from it. With a committed hub, work on
-physics.json or ros2_control.json never re-hits the Onshape API, which costs about 1000
-requests per export.
+Usage:
+  lite-description-onshape-to-urdf lite_dummy --keep-assets
 """
 
 import argparse
@@ -25,87 +17,60 @@ import sys
 from . import robot_model
 
 
-def export(robot_dir: Path, keep_assets: bool = False, convert: bool = False) -> Path:
-    """Run onshape-to-robot for ``robot_dir`` and place the outputs in the cad/ layout.
+def generate(robot_dir: Path, keep_assets: bool = False, convert: bool = False) -> list[Path]:
+    """Export ``urdf/<robot>.urdf`` and ``meshes/visual/``.
 
-    Args:
-        robot_dir: The ``robots/<robot>/`` directory to export.
-        keep_assets: Keep ``cad/assets/`` and ``cad/robot.pkl`` after the run.
-        convert: Rebuild from the local ``robot.pkl`` instead of calling the Onshape API.
-
-    Returns:
-        Path to the written ``urdf/<robot>.urdf`` hub.
+    ``keep_assets`` keeps ``cad/assets/`` and ``cad/robot.pkl`` for collider editing.
+    ``convert`` rebuilds from ``cad/robot.pkl`` instead of calling the Onshape API.
     """
-    robot = robot_dir.name
     cad_dir = robot_dir / "cad"
-    config_path = cad_dir / "config.json"
-    if not config_path.exists():
-        raise FileNotFoundError(f"Config file {config_path} does not exist!")
-
-    output_filename = json.loads(config_path.read_text()).get("output_filename", robot)
     assets_dir = cad_dir / "assets"
-    scad_dir = cad_dir / "scad"
+    output_filename = json.loads((cad_dir / "config.json").read_text())["output_filename"]
 
-    # onshape-to-robot reads collider sources from <workdir>/assets/.
-    if scad_dir.exists():
-        assets_dir.mkdir(exist_ok=True)
-        for scad_file in scad_dir.iterdir():
-            shutil.copy(scad_file, assets_dir / scad_file.name)
+    # onshape-to-robot reads the collider sources from cad/assets/.
+    assets_dir.mkdir(exist_ok=True)
+    for scad in (cad_dir / "scad").iterdir():
+        shutil.copy(scad, assets_dir)
 
     binary = shutil.which("onshape-to-robot") or str(Path(sys.executable).parent / "onshape-to-robot")
     if not Path(binary).exists():
         raise FileNotFoundError(
-            "The onshape-to-robot CLI was not found. It ships with the CAD toolchain rather than "
-            "the base install; install it with `uv sync --extra cad`."
+            "onshape-to-robot ships with the CAD toolchain. Install it with `uv sync --extra cad`."
         )
     arguments = [binary, str(cad_dir)]
     if convert:
-        # Offline: reload the existing robot.pkl. --save-pickle must NOT be combined with
-        # --convert, because onshape-to-robot runs its save branch before its convert
-        # branch and no robot is built on the convert path, so the two together raise a
-        # NameError.
+        # Do not add --save-pickle here. onshape-to-robot runs its save branch before its
+        # convert branch, and the convert path builds no robot, so the two raise a NameError.
         arguments.append("--convert")
     elif keep_assets:
-        # Build path: persist robot.pkl so later runs can re-derive offline via --convert.
+        # Save robot.pkl, so a later run can rebuild with --convert.
         arguments.append("--save-pickle")
     subprocess.run(arguments, check=True)
 
-    # Merged visual meshes -> the single meshes/visual/ copy.
-    merged = assets_dir / "merged"
-    if merged.exists():
-        visual_dir = robot_dir / "meshes" / "visual"
-        visual_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(merged, visual_dir, dirs_exist_ok=True)
-
-    # Flat URDF -> urdf/<robot>.urdf, with mesh refs pointed at meshes/visual/ and the ROS
-    # package:// scheme stripped. The finalize stage then harmonizes it in place.
-    hub_urdf = robot_dir / "urdf" / f"{robot}.urdf"
-    hub_urdf.parent.mkdir(parents=True, exist_ok=True)
-    produced_urdf = cad_dir / f"{output_filename}.urdf"
-    hub_urdf.write_text(
-        produced_urdf.read_text()
-        .replace("assets/merged/", "../meshes/visual/")
-        .replace("package://", "")
+    shutil.copytree(assets_dir / "merged", robot_dir / "meshes" / "visual", dirs_exist_ok=True)
+    hub = robot_dir / "urdf" / f"{robot_dir.name}.urdf"
+    hub.parent.mkdir(exist_ok=True)
+    produced = cad_dir / f"{output_filename}.urdf"
+    hub.write_text(
+        produced.read_text().replace("assets/merged/", "../meshes/visual/").replace("package://", "")
     )
-    produced_urdf.unlink(missing_ok=True)
+    produced.unlink()
 
     if not keep_assets:
-        shutil.rmtree(assets_dir, ignore_errors=True)
+        shutil.rmtree(assets_dir)
         if convert:
             (cad_dir / "robot.pkl").unlink(missing_ok=True)
-
-    print(f"[onshape] export -> {hub_urdf}")
-    return hub_urdf
+    return [hub]
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Export a raw URDF from Onshape CAD.")
-    parser.add_argument("robot", help="Variant name (under lite_description/robots/) or a path to a robot dir.")
-    parser.add_argument("--keep-assets", action="store_true", help="Keep the assets dir and robot.pkl.")
-    parser.add_argument("--convert", action="store_true", help="Convert from a local robot.pkl.")
+    parser = argparse.ArgumentParser(description="Export the URDF hub and meshes of a robot from Onshape.")
+    parser.add_argument("robot", help="Variant name, under lite_description/robots/.")
+    parser.add_argument("--keep-assets", action="store_true", help="Keep cad/assets/ and cad/robot.pkl.")
+    parser.add_argument("--convert", action="store_true", help="Rebuild from cad/robot.pkl, without the Onshape API.")
     args = parser.parse_args(argv)
-    export(robot_model.resolve_robot_dir(args.robot),
-           keep_assets=args.keep_assets, convert=args.convert)
+    for path in generate(robot_model.resolve_robot_dir(args.robot), args.keep_assets, args.convert):
+        print(f"Wrote {path}")
 
 
 if __name__ == "__main__":
