@@ -10,7 +10,7 @@
      meshdir ("../meshes/visual/") resolves. Consumed by humanoid_bringup_lite
      biped_mujoco.launch (robot_variant:=lite_biped_debug).
 
-     Floor friction and the visual block are byte-identical to lite_biped_scene so
+     The floor and the visual block are byte-identical to lite_biped_scene so
      that a lite_biped vs lite_biped_debug A/B isolates the FOOT, nothing else.
 
      home keyframe qpos differs from lite_biped only in the base z: the debug box
@@ -39,8 +39,8 @@
 
   <worldbody>
     <light pos="0 0 3.0" dir="0 0 -1" directional="true"/>
-    <geom name="floor" type="plane" size="0 0 0.05" material="groundplane"
-          condim="3" friction="1.0 0.005 0.0001"/>
+    <!-- The floor keeps the MuJoCo contact defaults, as the mjlab training plane does. -->
+    <geom name="floor" type="plane" size="0 0 0.05" material="groundplane"/>
   </worldbody>
 
   <keyframe>
