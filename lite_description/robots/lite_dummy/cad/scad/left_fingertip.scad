@@ -1,6 +1,6 @@
 % scale(1000) import("left_fingertip.stl");
 
-// Hand. Two capsules.
+// Hand. Two capsules. The file has the name of the Onshape part of the hand, fingertip.
 
 // The palm.
 translate([-555.91, 5.21, 3.15]) rotate([0, 84.56, 178.81])
