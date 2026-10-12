@@ -4,47 +4,39 @@
 [![ROS 2](https://img.shields.io/badge/ROS_2-Jazzy-22314E.svg)](https://docs.ros.org/en/jazzy/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-Robot description for the Berkeley Humanoid Lite V2, an open-source humanoid built on
-[Robstride](https://robstride.com) actuators. For each variant, this repository holds the
-URDF, the MJCF, the xacro and the meshes. A generator makes all of them from the Onshape
-CAD, so do not edit them by hand. The `lite_description` Python package serves MuJoCo Lab
-and Isaac Lab, and the `lite_description` ament package serves ROS 2.
-
-<!-- TODO: add a render / photo of the Lite robot here. -->
+This repository has the robot descriptions of the Berkeley Humanoid Lite V2, an open-source humanoid with [RobStride](https://robstride.com) actuators. Each variant has a URDF, an MJCF, a xacro and meshes. A generator makes these files from the Onshape CAD, so do not edit them by hand.
 
 ## Variants
 
-| Variant | Description | DoF | Root | `ros2_control` |
+Each image shows the visual meshes (left) and the colliders (right).
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/lite.png" height="180" alt="lite"><br><code>lite</code></td>
+    <td align="center"><img src="docs/images/lite_pro.png" height="180" alt="lite_pro"><br><code>lite_pro</code></td>
+    <td align="center"><img src="docs/images/lite_biped.png" height="180" alt="lite_biped"><br><code>lite_biped</code></td>
+    <td align="center"><img src="docs/images/lite_biped_debug.png" height="180" alt="lite_biped_debug"><br><code>lite_biped_debug</code></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><img src="docs/images/lite_dummy.png" height="180" alt="lite_dummy"><br><code>lite_dummy</code></td>
+    <td align="center" colspan="2"><img src="docs/images/lite_bimanual.png" height="180" alt="lite_bimanual"><br><code>lite_bimanual</code></td>
+  </tr>
+</table>
+
+| Variant | Body | DoF | Root | `ros2_control` |
 |---|---|---|---|---|
-| `lite` | full body (legs, 1-DoF waist yaw, arms, neck, 5-finger hands) | 72 | `pelvis` | model-only |
-| `lite_pro` | full body **Pro** (legs, 3-DoF waist, arms, neck, 5-finger hands) | 74 | `pelvis` | model-only |
-| `lite_dummy` | V1 bimanual upper body (arms + neck), the configuration `Humanoid Control` deploys | 17 | `chest` | Robstride on two CAN buses |
-| `lite_bimanual` | V2 bimanual arms, no neck | 14 | `chest` | Robstride on two CAN buses |
-| `lite_biped` | V2 legs (hip x3, knee, ankle x3 per leg), floating base | 14 | `pelvis` | Robstride on two CAN buses + base IMU |
-| `lite_biped_debug` | `lite_biped` with the flat debug foot instead of the rockered sole | 14 | `pelvis` | Robstride on two CAN buses + base IMU |
+| `lite` | Full body: legs, 1-DoF waist, arms, neck, 5-finger hands | 72 | `pelvis`, fixed | Model only |
+| `lite_pro` | Full body: legs, 3-DoF waist, arms, neck, 5-finger hands | 74 | `pelvis`, fixed | Model only |
+| `lite_biped` | V2 legs: 3-DoF hip, knee, 3-DoF ankle | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
+| `lite_biped_debug` | `lite_biped` with a flat debug foot | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
+| `lite_dummy` | V1 upper body: arms, neck | 17 | `chest`, fixed | RobStride, 2 CAN buses |
+| `lite_bimanual` | V2 arms, no neck | 14 | `chest`, fixed | RobStride, 2 CAN buses |
 
-Each variant is a `Configuration=` of the same Onshape document, `e9ee61a2e2678af2088d9f31`.
+In the MJCF, a "free" root body has a free joint, and a "fixed" root body is fixed to the world.
 
-## Hardware backends
+## Use
 
-A variant with a `ros2_control` block selects its backend with two xacro args, as the
-[Universal Robots description](https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/ros2/urdf/ur.ros2_control.xacro)
-does:
-
-| `sim_mujoco` | `use_mock_hardware` | Backend |
-|---|---|---|
-| `false` | `false` | `humanoid_devices_robstride/RobstrideSystem` |
-| `false` | `true` | `mock_components/GenericSystem` |
-| `true` | any | `mujoco_ros2_control/MujocoSystem` |
-
-The args select the plugin and nothing else. Each backend has one `<ros2_control>` block
-for each CAN bus, with the same component names. The joint macros always emit their
-hardware params, because each backend ignores the params that it does not know.
-`sim_mujoco` is not related to the `use_sim_time` node parameter, which controls the clock.
-
-## Usage
-
-### Simulation and RL (Python, no ROS toolchain)
+### Python: MuJoCo, mjlab and Isaac Lab
 
 ```bash
 uv add git+https://github.com/Berkeley-Humanoids/Lite-Description.git
@@ -52,119 +44,65 @@ uv add git+https://github.com/Berkeley-Humanoids/Lite-Description.git
 
 ```python
 import mujoco
-from lite_description import VARIANTS, get_mjcf_path, get_urdf_path
+from lite_description import get_mjcf_path, get_urdf_path
 
-model = mujoco.MjModel.from_xml_path(str(get_mjcf_path("lite_biped")))  # MuJoCo
+model = mujoco.MjModel.from_xml_path(str(get_mjcf_path("lite_biped")))  # MuJoCo, mjlab
 urdf_path = get_urdf_path("lite")                                      # Isaac Lab
 ```
 
-Each function returns a path in the installed package, and a name that is not in
-`VARIANTS` raises `ValueError`. A URDF or MJCF finds its meshes by a relative path, so load
-the file where it is. The package has no dependencies. The `uv.lock` of your project
-records the commit, so the assets change only when you upgrade `lite-description`.
-`lite_description.actuators` holds the spec tables of the actuators and the BeyondMimic
-formulas for the PD gains.
+The package has no dependencies, so the example also needs `mujoco`. `VARIANTS` lists the variant names, and a name that is not in `VARIANTS` raises `ValueError`. Each URDF and MJCF finds its meshes by a relative path, so load each file where it is. The `uv.lock` of your project pins the commit, so the assets change only when you upgrade `lite-description`. `lite_description.actuators` has the actuator spec tables and the BeyondMimic formulas for the PD gains.
 
-#### Colliders
+### View a model
 
-Each rigid segment has its own collider, in most cases one capsule, and the same collider
-in each variant. The scad file of each segment, in `cad/scad/`, tells why its collider has
-its shape. The shoe of `lite_biped`, `lite` and `lite_pro` is seven r8 capsules along the
-sole. The five under the flat sole are flush with it, 65 mm below the foot origin, and the
-last two follow the toe spring. `lite_biped_debug` keeps its flat debug box. At rest, the
-hip-motor capsule of `pelvis` overlaps the butt capsule of each `<side>_hip_roll`, so
-`physics.json` excludes those contacts.
-
-`lite_biped` also ships an optional convex sole hull with an exactly flat bottom,
-`meshes/collision/<side>_foot_hull.stl`, in the frame of the foot body. The MJCF does not
-reference it. To collide through the hull, replace the capsules of each foot with it:
+This script shows a model in its zero pose. The script does not step the physics, because the model falls with the default actuator gains.
 
 ```python
-import mujoco
-from lite_description import get_foot_hull_path, get_mjcf_path
+import time
 
-spec = mujoco.MjSpec.from_file(str(get_mjcf_path("lite_biped")))
-for side in ("left", "right"):
-    foot = spec.body(f"{side}_foot")
-    for geom in [g for g in foot.geoms if g.contype or g.conaffinity]:
-        spec.delete(geom)
-    spec.add_mesh(name=f"{side}_foot_hull", file=str(get_foot_hull_path("lite_biped", side)))
-    # The contact parameters of the lite_biped sole capsules.
-    foot.add_geom(name=f"{side}_foot_collision_0", type=mujoco.mjtGeom.mjGEOM_MESH,
-                  meshname=f"{side}_foot_hull", group=3, condim=3, priority=1,
-                  friction=[0.6, 0.005, 0.0001])
+import mujoco
+import mujoco.viewer
+from lite_description import get_mjcf_path
+
+model = mujoco.MjModel.from_xml_path(str(get_mjcf_path("lite")))
+data = mujoco.MjData(model)
+with mujoco.viewer.launch_passive(model, data) as viewer:
+    while viewer.is_running():
+        time.sleep(0.1)
 ```
 
-The foot bodies hold their own inertials, so the swap does not change the mass properties.
+To show the colliders, press 3. On macOS, run the script with `mjpython`.
 
 ### ROS 2
 
-`lite_description` is an `ament_cmake` package with its `package.xml` at the repo root.
-Build it with `colcon build` in a ROS 2 workspace, for example from the
-`humanoid_control.repos` of `Humanoid Control`. `robot_state_publisher` runs xacro on
-`$(find lite_description)/robots/<variant>/xacro/<variant>.urdf.xacro`, and the mesh paths
-use `package://lite_description/robots/<variant>/meshes/visual/`. The package installs
-each `robots/<variant>/` except `cad/`.
-
-## Re-generating from CAD
-
-Run the generator from a checkout, because the installed package does not have the `cad/`
-inputs:
+`lite_description` is also an `ament_cmake` package. Build it with `colcon build` in a ROS 2 workspace. Then expand the xacro of a variant:
 
 ```bash
-uv sync --extra cad
-uv run lite-description-generate lite_dummy                    # All stages
-uv run lite-description-generate lite_dummy --only mjcf,xacro  # After an edit of physics.json or ros2_control.json
-uv run lite-description-generate lite_dummy --force            # Export from Onshape again
+xacro $(ros2 pkg prefix --share lite_description)/robots/lite_biped/xacro/lite_biped.urdf.xacro
 ```
 
-| Stage | Reads | Writes |
-|---|---|---|
-| `onshape` | `cad/config.json`, `cad/scad/` | `urdf/<variant>.urdf`, `meshes/visual/` |
-| `urdf` | `urdf/<variant>.urdf`, `cad/joint_properties.json` | `urdf/<variant>.urdf`, in place |
-| `mjcf` | `urdf/<variant>.urdf`, `cad/joint_properties.json`, `cad/physics.json` | `mjcf/<variant>.xml` |
-| `xacro` | `urdf/<variant>.urdf`, `cad/ros2_control.json` | `xacro/<variant>.*.xacro` |
+The mesh paths use `package://lite_description/robots/<variant>/meshes/visual/`. For the hardware backends, see [ros2_control](docs/ros2_control.md).
 
-The inputs in `robots/<variant>/cad/` are:
+## Conventions
 
-- `config.json`: the Onshape document and the export options.
-- `joint_properties.json`: the armature, friction loss and effort limit of each joint.
-- `physics.json`: the MuJoCo `<option>`, and the opt-in free joint, base IMU, foot contact
-  model and contact excludes.
-- `ros2_control.json`: the hardware map. A variant without it gets a model-only xacro.
-- `scad/`: the collider sources.
+- Frames: x forward, y left, z up ([REP 103](https://www.ros.org/reps/rep-0103.html)). Units are SI, and angles are in radians.
+- Joint names: `[<side>_]<part>_<axis>`, for example `left_knee_pitch` and `waist_yaw`. Finger joints are `<side>_finger<n>_j<k>`.
+- `base_link`: only the xacro adds it, for ROS and KDL.
+- MJCF geom groups: the visual meshes are in group 1 and the colliders are in group 3. The MuJoCo viewer hides group 3 by default.
+- MJCF actuators: each actuated joint has one `<position>` actuator, with the effort limit as its `forcerange`. The actuators keep the MuJoCo default gains, `kp` 1 and `kv` 0. Thus set `kp` and `kv` on the actuators before you simulate.
+- Mass: each body has an explicit `<inertial>`. Thus a change to its geoms does not change its mass properties.
 
-The committed URDF is the kinematic hub. The `mjcf` and `xacro` stages derive from it, so
-the formats cannot drift apart. The hub has no `base_link`, and only the description xacro
-adds it for ROS and KDL. The `onshape` stage costs about 1000 Onshape API requests, so it
-runs only if the hub is missing, with `--force`, or with `--only onshape`. The MJCF has
-sensors only if `physics.json` asks for the base IMU, because `mujoco_ros2_control` aborts
-on a sensor that is not on a `<site>`.
+## Design notes
 
-The optional foot hull has its own command. It reads the shoe mesh from the MJCF and
-writes `meshes/collision/`:
+- The geometry is for simulation. Each link has one merged and simplified visual mesh, with one color and a size of about 2 MB or less. This repository has no detailed model for renders. For renders, use the Onshape CAD.
+- Each variant has one collider set, mostly capsules. To use fewer colliders in a biped, select them by name at load time. See [Colliders](docs/colliders.md).
+- The URDF colliders are cylinders, and the MJCF colliders are capsules. Thus a URDF consumer, for example Isaac Lab, gets shorter colliders with flat ends. See [Colliders](docs/colliders.md).
 
-```bash
-uv run lite-description-foot-hull lite_biped
-```
+## Documentation
 
-### Editing colliders (OpenSCAD)
+- [Colliders](docs/colliders.md): the collider design, collider selection and the optional sole hull.
+- [ros2_control](docs/ros2_control.md): the hardware backends and the xacro args.
+- [Generation](docs/generation.md): the generator, collider editing, the README images and the tests.
 
-Install OpenSCAD with `sudo apt install openscad`. Then export the Onshape assets and open
-a shape in the editor:
+## License
 
-```bash
-uv run lite-description-onshape-to-urdf lite_dummy --keep-assets
-cd lite_description/robots/lite_dummy/cad/assets/
-uv run onshape-to-robot-edit-shape ./chest.stl
-```
-
-## Tests
-
-```bash
-uv run pytest
-```
-
-The tests check the left/right symmetry, the URDF/MJCF parity and the mass properties of
-each variant, and that the committed xacro matches the generator. The xacro expansion
-tests need ROS, so `uv run pytest` skips them, and the ROS job of the CI runs them.
+[MIT](LICENSE)
