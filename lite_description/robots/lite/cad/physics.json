@@ -1,4 +1,5 @@
 {
-    "_comment": "lite sets no MuJoCo <option>, so the MJCF keeps the MuJoCo defaults. exclude: at rest, the pelvis capsule across the hip motors overlaps both butt (hip_roll) capsules.",
+    "_comment": "lite sets only the integrator. implicitfast integrates the actuator damping, as the MuJoCo docs recommend. The other <option> attributes keep the MuJoCo defaults. exclude: at rest, the pelvis capsule across the hip motors overlaps both butt (hip_roll) capsules.",
+    "integrator": "implicitfast",
     "exclude": [["pelvis", "left_hip_roll"], ["pelvis", "right_hip_roll"]]
 }
