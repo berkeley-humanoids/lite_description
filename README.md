@@ -39,7 +39,7 @@ In the MJCF, a "free" root body has a free joint, and a "fixed" root body is fix
 ### Python: MuJoCo, mjlab and Isaac Lab
 
 ```bash
-uv add git+https://github.com/Berkeley-Humanoids/Lite-Description.git
+uv add git+https://github.com/berkeley-humanoids/lite_description.git
 ```
 
 ```python
