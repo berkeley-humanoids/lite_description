@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>lite_description</name>
-  <version>0.0.2</version>
+  <version>0.5.0</version>
   <description>
     Description package for the Berkeley-Humanoids Lite humanoid. Each variant under
     lite_description/robots/ (full-body `lite` and `lite_pro`, bimanual `lite_dummy` and
