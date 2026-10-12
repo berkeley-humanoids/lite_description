@@ -47,7 +47,10 @@ def generate(robot_dir: Path, keep_assets: bool = False, convert: bool = False) 
         arguments.append("--save-pickle")
     subprocess.run(arguments, check=True)
 
-    shutil.copytree(assets_dir / "merged", robot_dir / "meshes" / "visual", dirs_exist_ok=True)
+    # Replace the old meshes, so that a removed or renamed part leaves no stale mesh.
+    visual_dir = robot_dir / "meshes" / "visual"
+    shutil.rmtree(visual_dir, ignore_errors=True)
+    shutil.copytree(assets_dir / "merged", visual_dir)
     hub = robot_dir / "urdf" / f"{robot_dir.name}.urdf"
     hub.parent.mkdir(exist_ok=True)
     produced = cad_dir / f"{output_filename}.urdf"
