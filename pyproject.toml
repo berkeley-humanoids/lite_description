@@ -29,6 +29,11 @@ test = [
     "pytest>=8.0",
     "lite-description[cad]",
 ]
+# The README images: lite_description.workflow.render_images.
+docs = [
+    "mujoco>=3.4.0",
+    "pillow>=12.3.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
