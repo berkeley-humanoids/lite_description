@@ -102,8 +102,10 @@ def test_urdf_and_mjcf_agree(variant):
 
 
 @pytest.mark.parametrize("variant", VARIANTS)
-def test_urdf_meshes_exist(variant):
+def test_urdf_meshes_match_the_mesh_files(variant):
     """MuJoCo loads each MJCF in the other tests, so only the URDF meshes need a check."""
     urdf = get_urdf_path(variant)
-    for mesh in ET.parse(urdf).getroot().iter("mesh"):
-        assert (urdf.parent / mesh.get("filename")).is_file(), mesh.get("filename")
+    referenced = {(urdf.parent / mesh.get("filename")).resolve() for mesh in ET.parse(urdf).getroot().iter("mesh")}
+    files = {path.resolve() for path in (urdf.parent.parent / "meshes" / "visual").iterdir()}
+    assert not referenced - files, f"missing: {sorted(path.name for path in referenced - files)}"
+    assert not files - referenced, f"not referenced: {sorted(path.name for path in files - referenced)}"
