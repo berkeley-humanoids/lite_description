@@ -98,10 +98,11 @@ def add_actuators(root: ET.Element, joint_properties: dict) -> None:
 def patch_contacts(root: ET.Element, contact: dict) -> None:
     """Apply the mjlab contact model of a legged robot, and name the collision geoms.
 
-    Each collision geom gets ``condim`` 1, which is frictionless, and the foot geoms get
-    ``condim`` 3 with friction. Thus the feet grip the ground, and a leg capsule that touches
-    the ground or the other leg slides instead of catching. Priority 1 makes the foot
-    friction win over the friction of the floor.
+    Each collision geom gets ``condim`` 1, and the foot geoms get ``condim`` 3 with friction.
+    Thus a contact between two legs is frictionless, and a leg capsule that touches the other
+    leg slides instead of catching. A contact with the ground uses the larger ``condim`` of
+    the two geoms, so a leg on the ground has friction, as in mjlab training. Priority 1
+    makes the foot friction win over the friction of the ground.
 
     The URDF import leaves the geoms without names, and the mjlab friction randomization
     selects the foot geoms by name. Thus each collision geom gets the name
