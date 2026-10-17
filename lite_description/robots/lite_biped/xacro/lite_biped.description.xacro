@@ -245,7 +245,7 @@
       <parent link="left_ankle_pitch" />
       <child link="left_foot" />
       <axis xyz="0 0 1" />
-      <limit effort="5.5" velocity="100" lower="-0.349066" upper="0.349066" />
+      <limit effort="5.5" velocity="50.27" lower="-0.349066" upper="0.349066" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from left_ankle_yaw to left_ankle_pitch -->
@@ -254,7 +254,7 @@
       <parent link="left_ankle_yaw" />
       <child link="left_ankle_pitch" />
       <axis xyz="0 0 1" />
-      <limit effort="14.0" velocity="100" lower="-0.523599" upper="0.872665" />
+      <limit effort="14.0" velocity="32.99" lower="-0.523599" upper="0.872665" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from left_knee_pitch to left_ankle_yaw -->
@@ -263,7 +263,7 @@
       <parent link="left_knee_pitch" />
       <child link="left_ankle_yaw" />
       <axis xyz="0 0 1" />
-      <limit effort="14.0" velocity="100" lower="-1.5708" upper="1.5708" />
+      <limit effort="14.0" velocity="32.99" lower="-1.5708" upper="1.5708" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from left_hip_yaw to left_knee_pitch -->
@@ -272,7 +272,7 @@
       <parent link="left_hip_yaw" />
       <child link="left_knee_pitch" />
       <axis xyz="0 0 1" />
-      <limit effort="36.0" velocity="100" lower="0" upper="2.35619" />
+      <limit effort="36.0" velocity="50.27" lower="0" upper="2.35619" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from left_hip_roll to left_hip_yaw -->
@@ -281,7 +281,7 @@
       <parent link="left_hip_roll" />
       <child link="left_hip_yaw" />
       <axis xyz="0 0 1" />
-      <limit effort="17.0" velocity="100" lower="-1.5708" upper="1.5708" />
+      <limit effort="17.0" velocity="42.94" lower="-1.5708" upper="1.5708" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from left_hip_pitch to left_hip_roll -->
@@ -290,7 +290,7 @@
       <parent link="left_hip_pitch" />
       <child link="left_hip_roll" />
       <axis xyz="0 0 1" />
-      <limit effort="36.0" velocity="100" lower="-0.349066" upper="1.5708" />
+      <limit effort="36.0" velocity="50.27" lower="-0.349066" upper="1.5708" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from pelvis to left_hip_pitch -->
@@ -299,7 +299,7 @@
       <parent link="pelvis" />
       <child link="left_hip_pitch" />
       <axis xyz="0 0 1" />
-      <limit effort="36.0" velocity="100" lower="-2.35619" upper="0.785398" />
+      <limit effort="36.0" velocity="50.27" lower="-2.35619" upper="0.785398" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Link right_hip_pitch -->
@@ -494,7 +494,7 @@
       <parent link="right_ankle_pitch" />
       <child link="right_foot" />
       <axis xyz="0 0 1" />
-      <limit effort="5.5" velocity="100" lower="-0.349066" upper="0.349066" />
+      <limit effort="5.5" velocity="50.27" lower="-0.349066" upper="0.349066" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from right_ankle_yaw to right_ankle_pitch -->
@@ -503,7 +503,7 @@
       <parent link="right_ankle_yaw" />
       <child link="right_ankle_pitch" />
       <axis xyz="0 0 1" />
-      <limit effort="14.0" velocity="100" lower="-0.523599" upper="0.872665" />
+      <limit effort="14.0" velocity="32.99" lower="-0.523599" upper="0.872665" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from right_knee_pitch to right_ankle_yaw -->
@@ -512,7 +512,7 @@
       <parent link="right_knee_pitch" />
       <child link="right_ankle_yaw" />
       <axis xyz="0 0 1" />
-      <limit effort="14.0" velocity="100" lower="-1.5708" upper="1.5708" />
+      <limit effort="14.0" velocity="32.99" lower="-1.5708" upper="1.5708" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from right_hip_yaw to right_knee_pitch -->
@@ -521,7 +521,7 @@
       <parent link="right_hip_yaw" />
       <child link="right_knee_pitch" />
       <axis xyz="0 0 1" />
-      <limit effort="36.0" velocity="100" lower="0" upper="2.35619" />
+      <limit effort="36.0" velocity="50.27" lower="0" upper="2.35619" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from right_hip_roll to right_hip_yaw -->
@@ -530,7 +530,7 @@
       <parent link="right_hip_roll" />
       <child link="right_hip_yaw" />
       <axis xyz="0 0 1" />
-      <limit effort="17.0" velocity="100" lower="-1.5708" upper="1.5708" />
+      <limit effort="17.0" velocity="42.94" lower="-1.5708" upper="1.5708" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from right_hip_pitch to right_hip_roll -->
@@ -539,7 +539,7 @@
       <parent link="right_hip_pitch" />
       <child link="right_hip_roll" />
       <axis xyz="0 0 1" />
-      <limit effort="36.0" velocity="100" lower="-1.5708" upper="0.349066" />
+      <limit effort="36.0" velocity="50.27" lower="-1.5708" upper="0.349066" />
       <joint_properties friction="0.1" />
     </joint>
     <!-- Joint from pelvis to right_hip_pitch -->
@@ -548,7 +548,7 @@
       <parent link="pelvis" />
       <child link="right_hip_pitch" />
       <axis xyz="0 0 1" />
-      <limit effort="36.0" velocity="100" lower="-2.35619" upper="0.785398" />
+      <limit effort="36.0" velocity="50.27" lower="-2.35619" upper="0.785398" />
       <joint_properties friction="0.1" />
     </joint>
   </xacro:macro>

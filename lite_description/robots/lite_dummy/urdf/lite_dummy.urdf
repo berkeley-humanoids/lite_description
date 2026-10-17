@@ -201,7 +201,7 @@
     <parent link="left_wrist_roll" />
     <child link="left_hand" />
     <axis xyz="0 0 1" />
-    <limit effort="5.5" velocity="100" lower="-0.785398" upper="0.785398" />
+    <limit effort="5.5" velocity="50.27" lower="-0.785398" upper="0.785398" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from left_wrist_yaw to left_wrist_roll -->
@@ -210,7 +210,7 @@
     <parent link="left_wrist_yaw" />
     <child link="left_wrist_roll" />
     <axis xyz="0 0 1" />
-    <limit effort="5.5" velocity="100" lower="-0.698132" upper="0.698132" />
+    <limit effort="5.5" velocity="50.27" lower="-0.698132" upper="0.698132" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from left_elbow_pitch to left_wrist_yaw -->
@@ -219,7 +219,7 @@
     <parent link="left_elbow_pitch" />
     <child link="left_wrist_yaw" />
     <axis xyz="0 0 1" />
-    <limit effort="5.5" velocity="100" lower="-1.5708" upper="1.5708" />
+    <limit effort="5.5" velocity="50.27" lower="-1.5708" upper="1.5708" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from left_shoulder_yaw to left_elbow_pitch -->
@@ -228,7 +228,7 @@
     <parent link="left_shoulder_yaw" />
     <child link="left_elbow_pitch" />
     <axis xyz="0 0 1" />
-    <limit effort="14" velocity="100" lower="-2.35619" upper="0" />
+    <limit effort="14" velocity="32.99" lower="-2.35619" upper="0" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from left_shoulder_roll to left_shoulder_yaw -->
@@ -237,7 +237,7 @@
     <parent link="left_shoulder_roll" />
     <child link="left_shoulder_yaw" />
     <axis xyz="0 0 1" />
-    <limit effort="14" velocity="100" lower="-1.5708" upper="1.5708" />
+    <limit effort="14" velocity="32.99" lower="-1.5708" upper="1.5708" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from left_shoulder_pitch to left_shoulder_roll -->
@@ -246,7 +246,7 @@
     <parent link="left_shoulder_pitch" />
     <child link="left_shoulder_roll" />
     <axis xyz="0 0 1" />
-    <limit effort="14" velocity="100" lower="-1.5708" upper="1.91986" />
+    <limit effort="14" velocity="32.99" lower="-1.5708" upper="1.91986" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from chest to left_shoulder_pitch -->
@@ -255,7 +255,7 @@
     <parent link="chest" />
     <child link="left_shoulder_pitch" />
     <axis xyz="0 0 1" />
-    <limit effort="17" velocity="100" lower="-3.14159" upper="0.785398" />
+    <limit effort="17" velocity="42.94" lower="-3.14159" upper="0.785398" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Link right_shoulder_pitch -->
@@ -429,7 +429,7 @@
     <parent link="right_wrist_roll" />
     <child link="right_hand" />
     <axis xyz="0 0 1" />
-    <limit effort="5.5" velocity="100" lower="-0.785398" upper="0.785398" />
+    <limit effort="5.5" velocity="50.27" lower="-0.785398" upper="0.785398" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from right_wrist_yaw to right_wrist_roll -->
@@ -438,7 +438,7 @@
     <parent link="right_wrist_yaw" />
     <child link="right_wrist_roll" />
     <axis xyz="0 0 1" />
-    <limit effort="5.5" velocity="100" lower="-0.698132" upper="0.698132" />
+    <limit effort="5.5" velocity="50.27" lower="-0.698132" upper="0.698132" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from right_elbow_pitch to right_wrist_yaw -->
@@ -447,7 +447,7 @@
     <parent link="right_elbow_pitch" />
     <child link="right_wrist_yaw" />
     <axis xyz="0 0 1" />
-    <limit effort="5.5" velocity="100" lower="-1.5708" upper="1.5708" />
+    <limit effort="5.5" velocity="50.27" lower="-1.5708" upper="1.5708" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from right_shoulder_yaw to right_elbow_pitch -->
@@ -456,7 +456,7 @@
     <parent link="right_shoulder_yaw" />
     <child link="right_elbow_pitch" />
     <axis xyz="0 0 1" />
-    <limit effort="14" velocity="100" lower="-2.35619" upper="0" />
+    <limit effort="14" velocity="32.99" lower="-2.35619" upper="0" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from right_shoulder_roll to right_shoulder_yaw -->
@@ -465,7 +465,7 @@
     <parent link="right_shoulder_roll" />
     <child link="right_shoulder_yaw" />
     <axis xyz="0 0 1" />
-    <limit effort="14" velocity="100" lower="-1.5708" upper="1.5708" />
+    <limit effort="14" velocity="32.99" lower="-1.5708" upper="1.5708" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from right_shoulder_pitch to right_shoulder_roll -->
@@ -474,7 +474,7 @@
     <parent link="right_shoulder_pitch" />
     <child link="right_shoulder_roll" />
     <axis xyz="0 0 1" />
-    <limit effort="14" velocity="100" lower="-1.91986" upper="1.5708" />
+    <limit effort="14" velocity="32.99" lower="-1.91986" upper="1.5708" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Joint from chest to right_shoulder_pitch -->
@@ -483,7 +483,7 @@
     <parent link="chest" />
     <child link="right_shoulder_pitch" />
     <axis xyz="0 0 1" />
-    <limit effort="17" velocity="100" lower="-3.14159" upper="0.785398" />
+    <limit effort="17" velocity="42.94" lower="-3.14159" upper="0.785398" />
     <joint_properties friction="0.1" />
   </joint>
   <!-- Link neck_yaw -->

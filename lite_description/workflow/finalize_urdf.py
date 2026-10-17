@@ -1,4 +1,4 @@
-"""Finalize the URDF hub in place: effort limits, mesh paths and the banner.
+"""Finalize the URDF hub in place: effort and velocity limits, mesh paths and the banner.
 
 The hub has no ``base_link``, because only ROS and KDL need it. Thus this stage is
 idempotent, and the MJCF has the CAD root link as its root. The description xacro adds
@@ -20,11 +20,16 @@ def generate(robot_dir: Path) -> list[Path]:
     tree = robot_model.parse(hub)
     root = tree.getroot()
 
-    # The Onshape export sets each effort limit to 100.
+    # The Onshape export sets each effort limit and each velocity limit to 100. A joint
+    # whose motor has no spec table keeps the velocity limit of the export.
     for joint in root.findall("joint"):
         if joint.get("type") != "fixed":
-            effort = robot_model.joint_property(joint.get("name"), joint_properties, "effort_limit")
-            joint.find("limit").set("effort", str(effort))
+            name, limit = joint.get("name"), joint.find("limit")
+            effort = robot_model.joint_property(name, joint_properties, "effort_limit")
+            limit.set("effort", str(effort))
+            velocity = robot_model.joint_property(name, joint_properties, "velocity_limit", None)
+            if velocity is not None:
+                limit.set("velocity", str(velocity))
     robot_model.rewrite_mesh_filenames(root, lambda name: f"../meshes/visual/{name}")
 
     # Replace the banner of the previous run. A comment has a function as its tag.

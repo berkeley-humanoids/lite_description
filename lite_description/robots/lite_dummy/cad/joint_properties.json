@@ -1,23 +1,28 @@
 {
+    "_comment_velocity_limit": "velocity_limit is the no-load output speed of the motor that drives the joint, from the tables in lite_description/actuators/. A joint without one keeps the velocity limit of the Onshape export.",
     "(left|right)_shoulder_pitch": {
         "friction_loss": 0.1,
         "armature": 0.005,
-        "effort_limit": 17
+        "effort_limit": 17,
+        "velocity_limit": 42.94
     },
     "(left|right)_shoulder_(roll|yaw)": {
         "friction_loss": 0.1,
         "armature": 0.002,
-        "effort_limit": 14
+        "effort_limit": 14,
+        "velocity_limit": 32.99
     },
     "(left|right)_elbow_pitch": {
         "friction_loss": 0.1,
         "armature": 0.002,
-        "effort_limit": 14
+        "effort_limit": 14,
+        "velocity_limit": 32.99
     },
     "(left|right)_wrist_(yaw|roll|pitch)": {
         "friction_loss": 0.1,
         "armature": 0.002,
-        "effort_limit": 5.5
+        "effort_limit": 5.5,
+        "velocity_limit": 50.27
     },
     "(left|right)_finger(1|2|3|4|5)_joint(1|2|3|4)": {
         "friction_loss": 0.1,
