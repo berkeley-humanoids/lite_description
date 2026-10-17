@@ -35,7 +35,7 @@ uv run lite-description-foot-hull lite_biped
 The inputs of each variant are in `robots/<variant>/cad/`:
 
 - `config.json`: the Onshape document and the export options.
-- `joint_properties.json`: the armature, friction loss and effort limit of each joint.
+- `joint_properties.json`: the armature, friction loss, effort limit and velocity limit of each joint. The velocity limit is the no-load speed of the joint's motor, from the tables in `lite_description/actuators/`.
 - `physics.json`: the MuJoCo `<option>`, and the opt-in free joint, base IMU, foot contact model and contact excludes.
 - `ros2_control.json`: the hardware map. A variant without this file gets a model-only xacro.
 - `scad/`: the collider sources.
