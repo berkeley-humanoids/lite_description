@@ -43,10 +43,14 @@ def joint_limits(root: ET.Element) -> dict[str, dict[str, float]]:
     }
 
 
-def joint_property(joint: str, joint_properties: dict, key: str):
+_REQUIRED = object()
+
+
+def joint_property(joint: str, joint_properties: dict, key: str, default=_REQUIRED):
     """Return ``key`` of ``joint`` in joint_properties.json.
 
     An exact joint name wins over a regex key. A key that starts with ``_`` is a note.
+    Without ``default``, a missing key raises ``ValueError``.
     """
     config = joint_properties.get(joint)
     if config is None:
@@ -56,6 +60,8 @@ def joint_property(joint: str, joint_properties: dict, key: str):
             {},
         )
     if key not in config:
+        if default is not _REQUIRED:
+            return default
         raise ValueError(f"joint_properties.json gives no {key!r} for joint {joint!r}.")
     return config[key]
 
