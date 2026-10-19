@@ -494,6 +494,7 @@
   <contact>
     <exclude body1="pelvis" body2="left_hip_roll" />
     <exclude body1="pelvis" body2="right_hip_roll" />
+    <exclude body1="pelvis" body2="chest" />
   </contact>
   <actuator>
     <position name="left_hip_pitch" joint="left_hip_pitch" forcerange="-97.0 97.0" />
