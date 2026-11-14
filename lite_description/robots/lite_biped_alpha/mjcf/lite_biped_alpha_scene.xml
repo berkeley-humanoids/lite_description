@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Deployment sim SCENE for the floating-base lite_biped_debug: the generated
-     robot (lite_biped_debug.xml: freejoint + IMU site/sensors + actuators) on a
+<!-- Deployment sim SCENE for the floating-base lite_biped_alpha: the generated
+     robot (lite_biped_alpha.xml: freejoint + IMU site/sensors + actuators) on a
      ground plane, with a `home` keyframe for the standing spawn pose.
 
      Hand-authored (NOT generated), mirroring lite_biped/mjcf/lite_biped_scene.xml:
-     the generator emits the robot-only lite_biped_debug.xml (reused as-is by
+     the generator emits the robot-only lite_biped_alpha.xml (reused as-is by
      mjlab training, which adds its own terrain); this wrapper adds the deployment
      floor + spawn pose. It lives in this mjcf/ dir so the included robot's
      meshdir ("../meshes/visual/") resolves. Consumed by humanoid_bringup_lite
-     biped_mujoco.launch (robot_variant:=lite_biped_debug).
+     biped_mujoco.launch (robot_variant:=lite_biped_alpha).
 
      The floor and the visual block are byte-identical to lite_biped_scene so
-     that a lite_biped vs lite_biped_debug A/B isolates the FOOT, nothing else.
+     that a lite_biped vs lite_biped_alpha A/B isolates the FOOT, nothing else.
 
      home keyframe qpos differs from lite_biped only in the base z: the debug box
      foot puts the pelvis 25 mm lower at the same joint angles (0.7443 m
      above the sole vs 0.7693 m), so 0.80 -> 0.775 keeps the same ~31 mm of
      spawn clearance. The 14 leg joints are unchanged (L hip p/r/y, knee,
      ankle y/p/r; then R), matching the training default pose. -->
-<mujoco model="lite_biped_debug_scene">
-  <include file="lite_biped_debug.xml"/>
+<mujoco model="lite_biped_alpha_scene">
+  <include file="lite_biped_alpha.xml"/>
 
   <statistic center="0 0 0.5" extent="1.6"/>
 

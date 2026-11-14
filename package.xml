@@ -6,7 +6,7 @@
   <description>
     Description package for the Berkeley-Humanoids Lite humanoid. Each variant under
     lite_description/robots/ (full-body `lite` and `lite_pro`, bimanual `lite_dummy` and
-    `lite_bimanual`, biped `lite_biped` and `lite_biped_debug`) ships xacro as the ROS
+    `lite_bimanual`, biped `lite_biped` and `lite_biped_alpha`) ships xacro as the ROS
     entry point, including a generated &lt;ros2_control&gt; block, plus a flattened URDF,
     an MJCF for the training and deployment sim, and meshes. The generator in the
     `lite_description.workflow` Python package makes every artifact from Onshape CAD, so

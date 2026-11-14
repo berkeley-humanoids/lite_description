@@ -57,4 +57,4 @@ def test_hulls_mirror():
 
 def test_variant_without_a_hull_raises():
     with pytest.raises(FileNotFoundError):
-        get_foot_hull_path("lite_biped_debug", "left")
+        get_foot_hull_path("lite_biped_alpha", "left")

@@ -4,7 +4,7 @@
 
 A part has a collider only if `cad/scad/` has a scad file with the name of the part. The export removes the mesh collider of each part. Thus many links have no collider, for example the ankle-yaw, ankle-pitch, wrist-yaw, wrist-roll and finger links. The scad file of each collider tells why the collider has its shape. In most cases, the collider is one capsule. A segment has the same collider in each variant.
 
-The shoe of `lite_biped`, `lite` and `lite_pro` is seven capsules of 8 mm radius along the sole. The five capsules under the flat sole are flush with it, 65 mm below the foot origin. The last two capsules follow the toe spring. `lite_biped_debug` keeps its flat debug box.
+The shoe of `lite_biped`, `lite` and `lite_pro` is seven capsules of 8 mm radius along the sole. The five capsules under the flat sole are flush with it, 65 mm below the foot origin. The last two capsules follow the toe spring. `lite_biped_alpha` keeps its flat debug box.
 
 MuJoCo ignores the contacts of a body with its parent, but not with bodies farther down the chain. At rest, the hip-motor capsule of `pelvis` overlaps the butt capsule of each `<side>_hip_roll`. Thus `physics.json` excludes those contacts.
 
@@ -16,7 +16,7 @@ A URDF consumer, for example Isaac Lab, gets the cylinders. Its contacts at the 
 
 ## Contact model of the bipeds
 
-The MJCF of `lite_biped` and `lite_biped_debug` applies the contact model of mjlab:
+The MJCF of `lite_biped` and `lite_biped_alpha` applies the contact model of mjlab:
 
 - Each collider has the name `<body>_collision_<i>`. For example, the sole capsules are `left_foot_collision_0` to `left_foot_collision_6`.
 - The foot colliders have `condim` 3, friction 0.6 and priority 1. Priority 1 makes the foot friction win over the friction of the ground.
