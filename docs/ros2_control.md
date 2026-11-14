@@ -1,6 +1,6 @@
 # ros2_control
 
-A variant with a `cad/ros2_control.json` has a `<ros2_control>` block in its xacro: `lite_dummy`, `lite_bimanual`, `lite_biped` and `lite_biped_debug`. `lite` and `lite_pro` have a model-only xacro.
+A variant with a `cad/ros2_control.json` has a `<ros2_control>` block in its xacro: `lite_dummy`, `lite_bimanual`, `lite_biped` and `lite_biped_alpha`. `lite` and `lite_pro` have a model-only xacro.
 
 ## Backends
 

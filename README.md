@@ -15,7 +15,7 @@ Each image shows the visual meshes (left) and the colliders (right).
     <td align="center"><img src="docs/images/lite.png" height="180" alt="lite"><br><code>lite</code></td>
     <td align="center"><img src="docs/images/lite_pro.png" height="180" alt="lite_pro"><br><code>lite_pro</code></td>
     <td align="center"><img src="docs/images/lite_biped.png" height="180" alt="lite_biped"><br><code>lite_biped</code></td>
-    <td align="center"><img src="docs/images/lite_biped_debug.png" height="180" alt="lite_biped_debug"><br><code>lite_biped_debug</code></td>
+    <td align="center"><img src="docs/images/lite_biped_alpha.png" height="180" alt="lite_biped_alpha"><br><code>lite_biped_alpha</code></td>
   </tr>
   <tr>
     <td align="center" colspan="2"><img src="docs/images/lite_dummy.png" height="180" alt="lite_dummy"><br><code>lite_dummy</code></td>
@@ -28,7 +28,7 @@ Each image shows the visual meshes (left) and the colliders (right).
 | `lite` | Full body: legs, 1-DoF waist, arms, neck, 5-finger hands | 72 | `pelvis`, fixed | Model only |
 | `lite_pro` | Full body: legs, 3-DoF waist, arms, neck, 5-finger hands | 74 | `pelvis`, fixed | Model only |
 | `lite_biped` | V2 legs: 3-DoF hip, knee, 3-DoF ankle | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
-| `lite_biped_debug` | `lite_biped` with a flat debug foot | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
+| `lite_biped_alpha` | `lite_biped` with a flat debug foot | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
 | `lite_dummy` | V1 upper body: arms, neck | 17 | `chest`, fixed | RobStride, 2 CAN buses |
 | `lite_bimanual` | V2 arms, no neck | 14 | `chest`, fixed | RobStride, 2 CAN buses |
 
