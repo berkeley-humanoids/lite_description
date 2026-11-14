@@ -11,7 +11,7 @@
      biped_mujoco.launch (robot_variant:=lite_biped_alpha).
 
      The floor and the visual block are byte-identical to lite_biped_scene so
-     that a lite_biped vs lite_biped_alpha A/B isolates the FOOT, nothing else.
+     that a lite_biped vs lite_biped_alpha A/B isolates the robot, nothing else.
 
      home keyframe qpos differs from lite_biped only in the base z: the debug box
      foot puts the pelvis 25 mm lower at the same joint angles (0.7443 m
