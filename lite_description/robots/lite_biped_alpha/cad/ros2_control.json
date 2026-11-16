@@ -1,5 +1,5 @@
 {
-    "_comment": "ROS 2 hardware mapping for the lite_biped_alpha variant (legs-only floating-base humanoid; identical to lite_biped except for a simplified foot collider and the battery chest). Drives generation of xacro/lite_biped_alpha.ros2_control.xacro. Joint position limits come from the URDF (single source). The sim/mock combined block also advertises a base IMU <sensor> (sim_mujoco only), backed by the MJCF base_quat/base_gyro/base_accel sensors via MujocoSystem and republished by imu_sensor_broadcaster. real-hardware can_id set from a live bus scan (left can2 ids 31-37, right can3 ids 41-47); direction/current_limit still pending commissioning + leg calibration. ankle_pitch carries a FOUR-BAR linkage (actuator in the shin pushes a coupler to a crank on the foot): ground = sqrt(160^2+12^2) = 160.449369 mm (the actuator pivot is 160 above / 12 BEHIND the ankle pivot, so the ground link is NOT 160), cranks 40, coupler 150, alpha_zero 338.822130 deg, sign +1 -- verified against CAD (the coupler closes to 150.0000 mm at joint -30/0/+50). RobstrideSystem converts joint<->actuator through it and refers the commanded impedance by J^2. Pass use_linkage:=false for calibration, which needs raw actuator angles.",
+    "_comment": "ROS 2 hardware mapping for the lite_biped_alpha variant (legs-only floating-base humanoid; identical to lite_biped except for a simplified foot collider and the battery chest). Drives generation of xacro/lite_biped_alpha.ros2_control.xacro. Joint position limits come from the URDF (single source). The sim/mock combined block also advertises a base IMU <sensor> (sim_mujoco only), backed by the MJCF base_quat/base_gyro/base_accel sensors via MujocoSystem and republished by imu_sensor_broadcaster. real-hardware can_id set from a live bus scan (left can2 ids 31-37, right can3 ids 41-47); direction/current_limit still pending commissioning + leg calibration.",
 
     "interfaces": {
         "command": ["position", "velocity", "effort", "stiffness", "damping"],
@@ -18,8 +18,7 @@
         "can_interface_left": "can2",
         "can_interface_right": "can3",
         "calibration_file": "",
-        "imu_port": "/dev/ttyUSB0",
-        "use_linkage": "true"
+        "imu_port": "/dev/ttyUSB0"
     },
 
 
@@ -37,7 +36,7 @@
         {"name": "left_hip_yaw",     "group": "left_leg",  "can_id": 33, "model": "rs-02", "direction": 1, "torque_limit": 17.0, "current_limit": 27},
         {"name": "left_knee_pitch",  "group": "left_leg",  "can_id": 34, "model": "rs-06", "direction": -1, "torque_limit": 36.0, "current_limit": 43},
         {"name": "left_ankle_yaw",   "group": "left_leg",  "can_id": 35, "model": "rs-00", "direction": 1, "torque_limit": 14.0, "current_limit": 16},
-        {"name": "left_ankle_pitch", "group": "left_leg",  "can_id": 36, "model": "rs-00", "direction": 1, "torque_limit": 14.0, "current_limit": 16, "linkage": {"ground": 160.449369, "crank_in": 40.0, "coupler": 150.0, "crank_out": 40.0, "alpha_zero": 338.822130, "sign": 1}},
+        {"name": "left_ankle_pitch", "group": "left_leg",  "can_id": 36, "model": "rs-00", "direction": 1, "torque_limit": 14.0, "current_limit": 16},
         {"name": "left_ankle_roll",  "group": "left_leg",  "can_id": 37, "model": "rs-05", "direction": -1, "torque_limit": 5.5,  "current_limit": 14},
 
         {"name": "right_hip_pitch",   "group": "right_leg", "can_id": 41, "model": "rs-06", "direction": 1, "torque_limit": 36.0, "current_limit": 43},
@@ -45,7 +44,7 @@
         {"name": "right_hip_yaw",     "group": "right_leg", "can_id": 43, "model": "rs-02", "direction": 1, "torque_limit": 17.0, "current_limit": 27},
         {"name": "right_knee_pitch",  "group": "right_leg", "can_id": 44, "model": "rs-06", "direction": 1, "torque_limit": 36.0, "current_limit": 43},
         {"name": "right_ankle_yaw",   "group": "right_leg", "can_id": 45, "model": "rs-00", "direction": 1, "torque_limit": 14.0, "current_limit": 16},
-        {"name": "right_ankle_pitch", "group": "right_leg", "can_id": 46, "model": "rs-00", "direction": -1, "torque_limit": 14.0, "current_limit": 16, "linkage": {"ground": 160.449369, "crank_in": 40.0, "coupler": 150.0, "crank_out": 40.0, "alpha_zero": 338.822130, "sign": 1}},
+        {"name": "right_ankle_pitch", "group": "right_leg", "can_id": 46, "model": "rs-00", "direction": -1, "torque_limit": 14.0, "current_limit": 16},
         {"name": "right_ankle_roll",  "group": "right_leg", "can_id": 47, "model": "rs-05", "direction": -1, "torque_limit": 5.5,  "current_limit": 14}
     ]
 }

@@ -73,32 +73,12 @@ def test_description_has_base_link_and_mesh_root(variant):
     assert "${mesh_root}/" in text
 
 
-def test_linkage_without_use_linkage_arg_is_rejected():
-    """The four-bar macros read ${use_linkage}, so the arg must exist."""
-    config = ros2_control("lite_biped")
-    del config["args"]["use_linkage"]
-    with pytest.raises(ValueError, match="use_linkage"):
-        urdf_to_xacro.build_ros2_control_xacro("lite_biped", config, {})
-
-
-def test_partial_linkage_is_rejected():
-    """humanoid_devices_robstride rejects a part of the four-bar params."""
-    config = ros2_control("lite_biped")
-    for joint in config["joints"]:
-        joint.get("linkage", {}).pop("sign", None)
-    with pytest.raises(ValueError, match="linkage is missing"):
-        urdf_to_xacro.build_ros2_control_xacro("lite_biped", config, joint_limits("lite_biped"))
-
-
 @pytest.mark.parametrize("variant", ROS2_CONTROL_VARIANTS)
 def test_ros2_control_structure(variant):
     config = ros2_control(variant)
     text = ros2_control_xacro(variant)
     assert {urdf_to_xacro.MOCK_ARG, urdf_to_xacro.SIM_ARG} <= set(config["args"])
-    # A joint with a four-bar uses the linkage macro instead of the plain one.
-    linkage = sum(1 for joint in config["joints"] if joint.get("linkage"))
-    assert text.count(f"<xacro:{variant}_joint ") == len(config["joints"]) - linkage
-    assert text.count(f"<xacro:{variant}_linkage_joint ") == linkage
+    assert text.count(f"<xacro:{variant}_joint ") == len(config["joints"])
     for plugin in config["backends"].values():
         assert plugin in text
     for group in config["groups"]:

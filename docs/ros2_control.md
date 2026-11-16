@@ -15,7 +15,7 @@ Two xacro args select the backend, as in the [Universal Robots description](http
 Each backend has one `<ros2_control>` block for each CAN bus, with the same component names. The joint macros always write their hardware params, because each backend ignores the params that it does not know. These parts differ between the backends:
 
 - Mock hardware declares the `safety_level` and `safety_flags` gpio state interfaces of each block. `RobstrideSystem` exports these interfaces itself, and `MujocoSystem` does not have them.
-- Only the real backend gets the `can_interface` and `calibration_file` hardware params and the value of `use_linkage`.
+- Only the real backend gets the `can_interface` and `calibration_file` hardware params.
 - Only MuJoCo and the real backend have the base IMU block of the bipeds.
 
 `sim_mujoco` is not related to the `use_sim_time` node parameter, which controls the clock.
@@ -30,7 +30,6 @@ Each backend has one `<ros2_control>` block for each CAN bus, with the same comp
 | `can_interface_right` | `can1`, bipeds `can3` | all four | CAN interface of the right side. |
 | `calibration_file` | `""` | all four | Calibration file of `RobstrideSystem`. |
 | `imu_port` | `/dev/ttyUSB0` | bipeds | Serial port of the base IMU. |
-| `use_linkage` | `true` | bipeds | Converts the ankle pitch between joint and actuator space through the four-bar linkage. Set it to `false` for calibration, which needs raw actuator angles. |
 
 ## Base IMU of the bipeds
 

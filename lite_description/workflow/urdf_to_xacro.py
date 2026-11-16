@@ -37,12 +37,6 @@ IMU_STATE_INTERFACES = (
     "linear_acceleration.x", "linear_acceleration.y", "linear_acceleration.z",
 )
 
-# Four-bar geometry a joint declares under ``linkage`` in ros2_control.json. The four
-# lengths share one unit, ``alpha_zero`` is in degrees and ``sign`` is +1 or -1. All six
-# are required: humanoid_devices_robstride rejects a partial set, and its defaults for
-# the last two would otherwise apply silently.
-LINKAGE_KEYS = ("ground", "crank_in", "coupler", "crank_out", "alpha_zero", "sign")
-
 MAX_LINE = 100
 
 
@@ -121,38 +115,19 @@ def build_description_xacro(root: ET.Element, robot: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _joint_macro(robot: str, command: list[str], state: list[str], linkage: bool) -> str:
-    """Return one joint macro. With ``linkage``, it also carries the four-bar params."""
+def _joint_macro(robot: str, command: list[str], state: list[str]) -> str:
+    """Return the joint macro."""
     lines = [f'      <command_interface name="{n}"/>' for n in command]
     lines += [f'      <state_interface name="{n}"/>' for n in state]
     interfaces = "\n".join(lines)
-    # (macro param, emitted <param> name). They differ only for use_linkage, whose
-    # plugin-side spelling is linkage_enabled.
-    hardware = [(p, p) for p in ("can_id", "model", "direction",
-                                 "lower_limit", "upper_limit", "torque_limit", "current_limit")]
-    if linkage:
-        hardware += [(f"linkage_{key}", f"linkage_{key}") for key in LINKAGE_KEYS]
-        hardware += [("use_linkage", "linkage_enabled")]
-        header = f"""  <!-- A joint driven through a four-bar linkage, otherwise identical to
-       {robot}_joint. The geometry is a physical fact, so it is always published:
-       calibrate_robot reads it from /robot_description to refer the URDF joint limits into
-       actuator space even on the runs where the plugin must not apply the transform.
-       linkage_enabled is the switch for that. With it true, RobstrideSystem converts
-       joint<->actuator through the linkage and refers the commanded impedance by J^2, so
-       /joint_states and every controller speak true joint space. Calibration sets it
-       false, because it needs raw actuator angles. -->"""
-    else:
-        header = f"""  <!-- One joint: {len(command)} command + {len(state)} state interfaces (MIT mode).
+    hardware = ("can_id", "model", "direction",
+                "lower_limit", "upper_limit", "torque_limit", "current_limit")
+    header = f"""  <!-- One joint: {len(command)} command + {len(state)} state interfaces (MIT mode).
        The params are read by humanoid_devices_robstride. The mock and MuJoCo backends
        ignore params they do not know, so this one macro serves all three. -->"""
-
-    name = f"{robot}_linkage_joint" if linkage else f"{robot}_joint"
-    params = ["name", *(param for param, _ in hardware)]
-    body = "\n".join(
-        f'      <param name="{emitted}">${{{param}}}</param>' for param, emitted in hardware
-    )
+    body = "\n".join(f'      <param name="{param}">${{{param}}}</param>' for param in hardware)
     return f"""{header}
-{_macro_open(name, params)}
+{_macro_open(f"{robot}_joint", ["name", *hardware])}
     <joint name="${{name}}">
 {interfaces}
 {body}
@@ -162,8 +137,6 @@ def _joint_macro(robot: str, command: list[str], state: list[str], linkage: bool
 
 def _joint_call(robot: str, joint: dict, limits: dict) -> str:
     """Return one joint-macro instantiation, with position limits taken from the URDF."""
-    linkage = joint.get("linkage")
-    macro = f"{robot}_linkage_joint" if linkage else f"{robot}_joint"
     limit = limits[joint["name"]]
     attributes = [
         f'name="{joint["name"]}"',
@@ -175,26 +148,14 @@ def _joint_call(robot: str, joint: dict, limits: dict) -> str:
         f'torque_limit="{joint["torque_limit"]}"',
         f'current_limit="{joint["current_limit"]}"',
     ]
-    if linkage:
-        missing = [key for key in LINKAGE_KEYS if key not in linkage]
-        if missing:
-            raise ValueError(
-                f"joint {joint['name']!r}: linkage is missing {missing}. "
-                f"Give all of {list(LINKAGE_KEYS)}."
-            )
-        attributes += [f'linkage_{key}="{linkage[key]}"' for key in LINKAGE_KEYS]
-        attributes.append('use_linkage="${use_linkage}"')
-
-    head = f"    <xacro:{macro} "
+    head = f"    <xacro:{robot}_joint "
     return f"{head}{_pack(attributes, ' ' * len(head))}/>"
 
 
 def _group_macro(robot: str, group: str, joints: list[dict], limits: dict) -> str:
     """Return the macro that instantiates every joint of one group."""
     calls = "\n".join(_joint_call(robot, joint, limits) for joint in joints)
-    # use_linkage only becomes a param where a joint in this group declares a four-bar.
-    params = ["use_linkage:=true"] if any(j.get("linkage") for j in joints) else []
-    return f"""{_macro_open(f"{robot}_{group}_joints", params)}
+    return f"""{_macro_open(f"{robot}_{group}_joints", [])}
 {calls}
   </xacro:macro>"""
 
@@ -249,20 +210,18 @@ def _combined_macro(robot: str, groups: list[dict], backends: dict, imu: dict | 
 
 
 def _real_macro(
-    robot: str, groups: list[dict], params: list[str], backends: dict, imu: dict | None,
-    linkage_groups: set[str],
+    robot: str, groups: list[dict], params: list[str], backends: dict, imu: dict | None
 ) -> str:
     """Return the real-hardware macro: one ``<ros2_control>`` block per CAN bus."""
     blocks = []
     for group in groups:
-        use_linkage = ' use_linkage="${use_linkage}"' if group["name"] in linkage_groups else ""
         blocks.append(f"""    <ros2_control name="{group["block_name"]}" type="system">
       <hardware>
         <plugin>{backends["real"]}</plugin>
         <param name="can_interface">${{{group["can_interface_arg"]}}}</param>
         <param name="calibration_file">${{calibration_file}}</param>
       </hardware>
-      <xacro:{robot}_{group["name"]}_joints{use_linkage}/>
+      <xacro:{robot}_{group["name"]}_joints/>
     </ros2_control>""")
     if imu:
         blocks.append(f"""    <ros2_control name="{imu["real_block_name"]}" type="sensor">
@@ -302,10 +261,6 @@ def build_ros2_control_xacro(robot: str, ros2_control: dict, limits: dict) -> st
     joints_by_group: dict[str, list[dict]] = {}
     for joint in ros2_control["joints"]:
         joints_by_group.setdefault(joint["group"], []).append(joint)
-    linkage_groups = {
-        group for group, joints in joints_by_group.items()
-        if any(j.get("linkage") for j in joints)
-    }
 
     command = ros2_control["interfaces"]["command"]
     state = ros2_control["interfaces"]["state"]
@@ -313,25 +268,18 @@ def build_ros2_control_xacro(robot: str, ros2_control: dict, limits: dict) -> st
     imu = ros2_control.get("imu")
     args = list(ros2_control["args"])
     # The real macro takes every arg except the backend switches, which only the top
-    # macro reads. An arg a robot does not have (imu_port, use_linkage) is absent
+    # macro reads. An arg a robot does not have (imu_port) is absent
     # everywhere, so ros2_control.json's `args` is the single source for both lists.
     real_params = [a for a in args if a not in (MOCK_ARG, SIM_ARG)]
-    if linkage_groups and "use_linkage" not in real_params:
-        raise ValueError(
-            f"{robot}: joints in {sorted(linkage_groups)} declare a four-bar linkage, so "
-            f'ros2_control.json must declare a "use_linkage" arg.'
-        )
 
-    parts = [_joint_macro(robot, command, state, linkage=False)]
-    if linkage_groups:
-        parts.append(_joint_macro(robot, command, state, linkage=True))
+    parts = [_joint_macro(robot, command, state)]
     parts += [
         _group_macro(robot, group["name"], joints_by_group[group["name"]], limits)
         for group in groups
     ]
     parts += [
         _combined_macro(robot, groups, ros2_control["backends"], imu),
-        _real_macro(robot, groups, real_params, ros2_control["backends"], imu, linkage_groups),
+        _real_macro(robot, groups, real_params, ros2_control["backends"], imu),
         _top_macro(robot, args, real_params),
     ]
 
