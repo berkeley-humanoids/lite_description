@@ -7,7 +7,6 @@
   <xacro:arg name="can_interface_right" default="can3"/>
   <xacro:arg name="calibration_file" default=""/>
   <xacro:arg name="imu_port" default="/dev/ttyUSB0"/>
-  <xacro:arg name="use_linkage" default="true"/>
 
   <xacro:include filename="$(find lite_description)/robots/lite_biped_alpha/xacro/lite_biped_alpha.description.xacro"/>
   <xacro:include filename="$(find lite_description)/robots/lite_biped_alpha/xacro/lite_biped_alpha.ros2_control.xacro"/>
@@ -20,6 +19,5 @@
     can_interface_left="$(arg can_interface_left)"
     can_interface_right="$(arg can_interface_right)"
     calibration_file="$(arg calibration_file)"
-    imu_port="$(arg imu_port)"
-    use_linkage="$(arg use_linkage)"/>
+    imu_port="$(arg imu_port)"/>
 </robot>
