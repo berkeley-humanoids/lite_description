@@ -138,7 +138,8 @@
   <!-- Real hardware: one <ros2_control> block per CAN bus. The controller_manager
        runs them concurrently and exposes a single flat joint list to controllers. -->
   <xacro:macro name="lite_biped_ros2_control_real"
-               params="can_interface_left can_interface_right calibration_file imu_port">
+               params="can_interface_left can_interface_right calibration_file imu_port
+                       imu_mount_rpy">
     <ros2_control name="LiteBipedLeftLeg" type="system">
       <hardware>
         <plugin>humanoid_devices_robstride/RobstrideSystem</plugin>
@@ -159,6 +160,7 @@
       <hardware>
         <plugin>humanoid_devices_witmotion/WitImuSensor</plugin>
         <param name="port">${imu_port}</param>
+        <param name="mount_rpy">${imu_mount_rpy}</param>
       </hardware>
       <sensor name="base_imu">
         <state_interface name="orientation.x"/>
@@ -180,7 +182,7 @@
        sim_mujoco wins over use_mock_hardware. -->
   <xacro:macro name="lite_biped_ros2_control"
                params="use_mock_hardware sim_mujoco can_interface_left can_interface_right
-                       calibration_file imu_port">
+                       calibration_file imu_port imu_mount_rpy">
     <xacro:if value="${sim_mujoco or use_mock_hardware}">
       <xacro:lite_biped_ros2_control_combined sim_mujoco="${sim_mujoco}"/>
     </xacro:if>
@@ -189,7 +191,8 @@
         can_interface_left="${can_interface_left}"
         can_interface_right="${can_interface_right}"
         calibration_file="${calibration_file}"
-        imu_port="${imu_port}"/>
+        imu_port="${imu_port}"
+        imu_mount_rpy="${imu_mount_rpy}"/>
     </xacro:unless>
   </xacro:macro>
 

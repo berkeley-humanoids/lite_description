@@ -30,6 +30,7 @@ Each backend has one `<ros2_control>` block for each CAN bus, with the same comp
 | `can_interface_right` | `can1`, bipeds `can3` | all four | CAN interface of the right side. |
 | `calibration_file` | `""` | all four | Calibration file of `RobstrideSystem`. |
 | `imu_port` | `/dev/ttyUSB0` | bipeds | Serial port of the base IMU. |
+| `imu_mount_rpy` | `0 0 0` | bipeds | Orientation of the IMU in the pelvis frame, as roll, pitch and yaw in rad. The IMU driver turns its readings into the pelvis frame. |
 
 ## Base IMU of the bipeds
 

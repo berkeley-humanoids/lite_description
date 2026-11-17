@@ -18,7 +18,8 @@
         "can_interface_left": "can2",
         "can_interface_right": "can3",
         "calibration_file": "",
-        "imu_port": "/dev/ttyUSB0"
+        "imu_port": "/dev/ttyUSB0",
+        "imu_mount_rpy": "0 0 0"
     },
 
 
