@@ -228,6 +228,7 @@ def _real_macro(
       <hardware>
         <plugin>{imu["real_plugin"]}</plugin>
         <param name="port">${{imu_port}}</param>
+        <param name="mount_rpy">${{imu_mount_rpy}}</param>
       </hardware>
 {_sensor_element(imu["name"], "      ")}
     </ros2_control>""")
@@ -268,7 +269,7 @@ def build_ros2_control_xacro(robot: str, ros2_control: dict, limits: dict) -> st
     imu = ros2_control.get("imu")
     args = list(ros2_control["args"])
     # The real macro takes every arg except the backend switches, which only the top
-    # macro reads. An arg a robot does not have (imu_port) is absent
+    # macro reads. An arg a robot does not have (imu_port, imu_mount_rpy) is absent
     # everywhere, so ros2_control.json's `args` is the single source for both lists.
     real_params = [a for a in args if a not in (MOCK_ARG, SIM_ARG)]
 
