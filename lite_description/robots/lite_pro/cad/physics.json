@@ -1,5 +1,5 @@
 {
-    "_comment": "lite_pro sets only the integrator. implicitfast integrates the actuator damping, as the MuJoCo docs recommend. The other <option> attributes keep the MuJoCo defaults. exclude: at rest, the pelvis capsule across the hip motors overlaps both butt (hip_roll) capsules.",
+    "_comment": "lite_pro sets only the integrator. implicitfast integrates the actuator damping, as the MuJoCo docs recommend. The other <option> attributes keep the MuJoCo defaults. exclude: at rest, the pelvis capsule across the hip motors overlaps both butt (hip_roll) capsules, and over most of the waist_pitch range the chest sphere overlaps the pelvis capsule (3.0 cm at -1.57 rad, 1.2 cm at 0.79 rad).",
     "integrator": "implicitfast",
-    "exclude": [["pelvis", "left_hip_roll"], ["pelvis", "right_hip_roll"]]
+    "exclude": [["pelvis", "left_hip_roll"], ["pelvis", "right_hip_roll"], ["pelvis", "chest"]]
 }
