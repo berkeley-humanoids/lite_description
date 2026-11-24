@@ -25,6 +25,7 @@
       <joint name="floating_base_joint" type="free" limited="false" actuatorfrclimited="false" /><site name="imu_site" pos="0.0 0.0 0.08" /><inertial pos="0.0117388 -3.26955e-07 0.172437" quat="0.9997 4.02763e-06 -0.0244756 2.06418e-05" mass="5.097" diaginertia="0.0719147 0.0697925 0.0138077" />
       <geom size="0.069 0.019515" pos="0.00964 1e-05 0.09166" quat="0.499998 -0.5 0.5 0.500002" type="capsule" group="3" name="pelvis_collision_0" condim="1" />
       <geom size="0.052 0.072245" pos="0.02 -1e-05 0" quat="0.499998 -0.5 0.5 0.500002" type="capsule" group="3" name="pelvis_collision_1" condim="1" />
+      <geom size="0.074 0.095" pos="0.0112 0 0.2448" quat="0.705986 0.0397798 -0.03978 -0.705988" type="capsule" group="3" name="pelvis_collision_2" condim="1" />
       <geom pos="0.011317 -5.46765e-07 0.194586" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.933333 0.933333 0.933333 1" mesh="pelvis_visual" />
       <body name="imu" pos="0 0 0.08">
         <inertial pos="0 0 0" mass="1e-09" diaginertia="0 0 0" />

@@ -28,6 +28,12 @@
           <cylinder length="0.14449" radius="0.052" />
         </geometry>
       </collision>
+      <collision>
+        <origin xyz="0.0112 0 0.2448" rpy="0.112574 0 -1.5708" />
+        <geometry>
+          <cylinder length="0.19" radius="0.074" />
+        </geometry>
+      </collision>
       <visual>
         <origin xyz="0.011317 -5.46765e-07 0.194586" rpy="0 -0 0" />
         <geometry>

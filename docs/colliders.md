@@ -6,6 +6,8 @@ A part has a collider only if `cad/scad/` has a scad file with the name of the p
 
 The shoe of `lite_biped`, `lite` and `lite_pro` is seven capsules of 8 mm radius along the sole. The five capsules under the flat sole are flush with it, 65 mm below the foot origin. The last two capsules follow the toe spring. `lite_biped_alpha` keeps its flat debug box.
 
+The pelvis of `lite_biped` and `lite_biped_alpha` has three capsules: the waist block, the hip motors and the battery chest.
+
 MuJoCo ignores the contacts of a body with its parent, but not with bodies farther down the chain. At rest, the hip-motor capsule of `pelvis` overlaps the butt capsule of each `<side>_hip_roll`. Thus `physics.json` excludes those contacts.
 
 ## URDF cylinders and MJCF capsules

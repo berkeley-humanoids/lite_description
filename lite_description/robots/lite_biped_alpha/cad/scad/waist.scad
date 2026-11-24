@@ -1,6 +1,6 @@
 % scale(1000) import("waist.stl");
 
-// Pelvis. Two capsules.
+// Pelvis. Three capsules.
 
 // The pelvis block.
 translate([-0.01, 9.64, 91.66]) rotate([0, 90, 180])
@@ -11,3 +11,8 @@ translate([-0.01, 9.64, 91.66]) rotate([0, 90, 180])
 // excludes pelvis <-> hip_roll.
 translate([0.01, 20, 0]) rotate([0, 90, 180])
     cylinder(r=52, h=144.49, center=true);
+
+// The battery chest above the waist, tilted 6.45 deg back with its shell. 87% of the
+// chest shell lies within 5 mm of this capsule, which reaches at most 18 mm past it.
+translate([0, 11.2, 244.8]) rotate([6.45, 0, 0])
+    cylinder(r=74, h=190, center=true);
