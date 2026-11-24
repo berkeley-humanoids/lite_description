@@ -27,8 +27,8 @@ Each image shows the visual meshes (left) and the colliders (right).
 |---|---|---|---|---|
 | `lite` | Full body: legs, 1-DoF waist, arms, neck, 5-finger hands | 72 | `pelvis`, fixed | Model only |
 | `lite_pro` | Full body: legs, 3-DoF waist, arms, neck, 5-finger hands | 74 | `pelvis`, fixed | Model only |
-| `lite_biped` | V2 legs: 3-DoF hip, knee, 3-DoF ankle | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
-| `lite_biped_alpha` | `lite_biped` with a flat debug foot and the battery chest | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
+| `lite_biped` | V2 legs: 3-DoF hip, knee, 3-DoF ankle, and the battery chest | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
+| `lite_biped_alpha` | `lite_biped` with a flat debug foot | 14 | `pelvis`, free | RobStride, 2 CAN buses, base IMU |
 | `lite_dummy` | V1 upper body: arms, neck | 17 | `chest`, fixed | RobStride, 2 CAN buses |
 | `lite_bimanual` | V2 arms, no neck | 14 | `chest`, fixed | RobStride, 2 CAN buses |
 
